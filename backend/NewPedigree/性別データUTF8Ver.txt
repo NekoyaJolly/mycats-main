@@ -1,0 +1,6 @@
+"Code","Gender"
+0,
+1,"Male"
+2,"Female"
+3,"Neuter"
+4,"Spay"

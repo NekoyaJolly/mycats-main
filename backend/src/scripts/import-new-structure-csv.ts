@@ -1,0 +1,604 @@
+import { PrismaClient } from '@prisma/client';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import csv from 'csv-parser';
+
+const prisma = new PrismaClient();
+
+interface BreedData {
+  key: string;
+  name: string;
+}
+
+interface CoatColorData {
+  key: string;
+  name: string;
+}
+
+interface NewPedigreeData {
+  pedigreeId: string;
+  title: string;
+  catName: string;
+  catName2: string;
+  breedCode: string;
+  gender: string;
+  eyeColor: string;
+  coatColorCode: string;
+  birthDate: string;
+  breederName: string;
+  ownerName: string;
+  registrationDate: string;
+  brotherCount: string;
+  sisterCount: string;
+  notes: string;
+  notes2: string;
+  otherNo: string;
+  // Father data - 正確なフィールド名
+  fatherTitle: string;
+  fatherName: string; // FatherName
+  fatherCatName2: string; // FatherCatName2
+  fatherCoatColor: string;
+  fatherEyeColor: string;
+  fatherJCU: string;
+  fatherOtherCode: string;
+  // Mother data - 正確なフィールド名
+  motherTitle: string;
+  motherCatName: string; // MotherCatName
+  motherCatName2: string; // MotherCatName2
+  motherCoatColor: string;
+  motherEyeColor: string;
+  motherJCU: string;
+  motherOtherCode: string;
+  // Grandparents data - 正確なフィールド名
+  ffTitle: string;
+  ffCatName: string; // FFCatName
+  ffCatColor: string; // FFCatColor
+  ffJCU: string;
+  fmTitle: string;
+  fmCatName: string; // FMCatName
+  fmCatColor: string; // FMCatColor
+  fmJCU: string;
+  mfTitle: string;
+  mfCatName: string; // MFCatName
+  mfCatColor: string; // MFCatColor
+  mfJCU: string;
+  mmTitle: string;
+  mmCatName: string; // MMCatName
+  mmCatColor: string; // MMCatColor
+  mmJCU: string;
+  // Great-grandparents data - 正確なフィールド名
+  fffTitle: string;
+  fffCatName: string; // FFFCatName
+  fffCatColor: string; // FFFCatColor
+  fffJCU: string;
+  ffmTitle: string;
+  ffmCatName: string; // FFMCatName
+  ffmCatColor: string; // FFMCatColor
+  ffmJCU: string;
+  fmfTitle: string;
+  fmfCatName: string; // FMFCatName
+  fmfCatColor: string; // FMFCatColor
+  fmfJCU: string;
+  fmmTitle: string;
+  fmmCatName: string; // FMMCatName
+  fmmCatColor: string; // FMMCatColor
+  fmmJCU: string;
+  mffTitle: string;
+  mffCatName: string; // MFFCatName
+  mffCatColor: string; // MFFCatColor
+  mffJCU: string;
+  mfmTitle: string;
+  mfmCatName: string; // MFMCatName
+  mfmCatColor: string; // MFMCatColor
+  mfmJCU: string;
+  mmfTitle: string;
+  mmfCatName: string; // MMFCatName
+  mmfCatColor: string; // MMFCatColor
+  mmfJCU: string;
+  mmmTitle: string;
+  mmmCatName: string; // MMMCatName
+  mmmCatColor: string; // MMMCatColor
+  mmmJCU: string;
+  oldCode: string;
+}
+
+/**
+ * 新しいCSV構造でのデータインポート関数
+ *
+ * @param csvFileName インポートするCSVファイル名（省略時はデフォルト）
+ * @param options インポートオプション
+ */
+async function importNewStructureCsvData(
+  csvFileName?: string,
+  options?: {
+    skipBreeds?: boolean;
+    skipCoatColors?: boolean;
+    skipPedigrees?: boolean;
+    batchSize?: number;
+  }
+) {
+  const {
+    skipBreeds = false,
+    skipCoatColors = false,
+    skipPedigrees = false,
+    batchSize = 100,
+  } = options || {};
+
+  try {
+    console.log('🚀 新しいCSV構造でのデータインポートを開始します...');
+
+    // ブリードデータのインポート
+    if (!skipBreeds) {
+      await importBreeds();
+    }
+
+    // 毛色データのインポート
+    if (!skipCoatColors) {
+      await importCoatColors();
+    }
+
+    // 血統書データのインポート
+    if (!skipPedigrees) {
+      await importNewStructurePedigrees(csvFileName, batchSize);
+    }
+
+    console.log('✅ 新しいCSV構造でのデータインポートが完了しました！');
+  } catch (error) {
+    console.error('❌ インポートエラー:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+async function importBreeds() {
+  console.log('🐱 猫種データをインポート中...');
+
+  const breeds: BreedData[] = [];
+  const csvPath = path.join(__dirname, '../../NewPedigree/猫種データUTF8Ver.csv');
+
+  return new Promise<void>((resolve, reject) => {
+    fs.createReadStream(csvPath)
+      .pipe(csv({ headers: ['key', 'name'] }))
+      .on('data', (data: BreedData) => {
+        if (data.key && data.name && data.key !== 'キー') {
+          breeds.push(data);
+        }
+      })
+      .on('end', async () => {
+        try {
+          const processedBreedNames = new Set<string>();
+          for (const breed of breeds) {
+            const code = parseInt(breed.key);
+            const trimmedName = breed.name.trim();
+            if (!isNaN(code) && trimmedName && !processedBreedNames.has(trimmedName)) {
+              processedBreedNames.add(trimmedName);
+              await prisma.breed.upsert({
+                where: { code },
+                update: { name: trimmedName },
+                create: {
+                  code,
+                  name: trimmedName,
+                },
+              });
+            }
+          }
+          console.log(`✅ ${breeds.length}種の猫種をインポートしました`);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on('error', reject);
+  });
+}
+
+async function importCoatColors() {
+  console.log('🎨 毛色データをインポート中...');
+
+  const colors: CoatColorData[] = [];
+  const csvPath = path.join(__dirname, '../../NewPedigree/色柄データUTF8Ver.csv');
+
+  return new Promise<void>((resolve, reject) => {
+    fs.createReadStream(csvPath)
+      .pipe(csv({ headers: ['key', 'name'] }))
+      .on('data', (data: CoatColorData) => {
+        if (data.key && data.name && data.key !== 'キー') {
+          colors.push(data);
+        }
+      })
+      .on('end', async () => {
+        try {
+          const processedColorNames = new Set<string>();
+          for (const color of colors) {
+            const code = parseInt(color.key);
+            const trimmedName = color.name.trim();
+            if (!isNaN(code) && trimmedName && !processedColorNames.has(trimmedName)) {
+              processedColorNames.add(trimmedName);
+              await prisma.coatColor.upsert({
+                where: { code },
+                update: { name: trimmedName },
+                create: {
+                  code,
+                  name: trimmedName,
+                },
+              });
+            }
+          }
+          console.log(`✅ ${colors.length}種の毛色をインポートしました`);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on('error', reject);
+  });
+}
+
+async function importNewStructurePedigrees(csvFileName?: string, batchSize: number = 100) {
+  console.log('📜 新しい構造での血統書データをインポート中...');
+
+  const defaultFileName = '血統書データRenamed_converted.csv';
+  const fileName = csvFileName || defaultFileName;
+  const csvPath = path.join(__dirname, '../../NewPedigree', fileName);
+
+  // ファイル存在チェック
+  if (!fs.existsSync(csvPath)) {
+    throw new Error(`CSVファイルが見つかりません: ${csvPath}`);
+  }
+
+  console.log(`📁 使用ファイル: ${fileName}`);
+
+  const pedigrees: NewPedigreeData[] = [];
+
+  // 新しい構造のCSVヘッダー定義
+  const headers = [
+    'pedigreeId',
+    'title',
+    'catName',
+    'catName2',
+    'breedCode',
+    'gender',
+    'eyeColor',
+    'coatColorCode',
+    'birthDate',
+    'breederName',
+    'ownerName',
+    'registrationDate',
+    'brotherCount',
+    'sisterCount',
+    'notes',
+    'notes2',
+    'otherNo',
+    // Father data
+    'fatherTitle',
+    'fatherName',
+    'fatherCatName2',
+    'fatherCoatColor',
+    'fatherEyeColor',
+    'fatherJCU',
+    'fatherOtherCode',
+    // Mother data
+    'motherTitle',
+    'motherName',
+    'motherCatName2',
+    'motherCoatColor',
+    'motherEyeColor',
+    'motherJCU',
+    'motherOtherCode',
+    // Grandparents data (simplified)
+    'ffTitle',
+    'ffCatName',
+    'ffJCU',
+    'fmTitle',
+    'fmCatName',
+    'fmJCU',
+    'mfTitle',
+    'mfCatName',
+    'mfJCU',
+    'mmTitle',
+    'mmCatName',
+    'mmJCU',
+    // Great-grandparents data (simplified)
+    'fffTitle',
+    'fffCatName',
+    'fffJCU',
+    'ffmTitle',
+    'ffmCatName',
+    'ffmJCU',
+    'fmfTitle',
+    'fmfCatName',
+    'fmfJCU',
+    'fmmTitle',
+    'fmmCatName',
+    'fmmJCU',
+    'mffTitle',
+    'mffCatName',
+    'mffJCU',
+    'mfmTitle',
+    'mfmCatName',
+    'mfmJCU',
+    'mmfTitle',
+    'mmfCatName',
+    'mmfJCU',
+    'mmmTitle',
+    'mmmCatName',
+    'mmmJCU',
+    'oldCode',
+  ];
+
+  return new Promise<void>((resolve, reject) => {
+    let rowCount = 0;
+
+    fs.createReadStream(csvPath)
+      .pipe(csv({ headers }))
+      .on('data', (data: NewPedigreeData) => {
+        rowCount++;
+        if (rowCount > 1 && data.pedigreeId && data.pedigreeId !== 'PedigreeID') {
+          pedigrees.push(data);
+        }
+      })
+      .on('end', async () => {
+        try {
+          console.log(`📊 処理対象: ${pedigrees.length}件の血統書データ`);
+
+          // バッチ処理でインポート
+          for (let i = 0; i < pedigrees.length; i += batchSize) {
+            const batch = pedigrees.slice(i, i + batchSize);
+            console.log(
+              `📦 バッチ ${Math.floor(i / batchSize) + 1}/${Math.ceil(pedigrees.length / batchSize)} (${batch.length}件) を処理中...`
+            );
+
+            for (const pedigree of batch) {
+              try {
+                // 日付の解析
+                const birthDate = pedigree.birthDate ? parseDate(pedigree.birthDate) : null;
+                const registrationDate = pedigree.registrationDate
+                  ? parseDate(pedigree.registrationDate)
+                  : null;
+
+                // 数値の解析
+                const breedCode = pedigree.breedCode ? parseInt(pedigree.breedCode) : null;
+                const coatColorCode = pedigree.coatColorCode
+                  ? parseInt(pedigree.coatColorCode)
+                  : null;
+                const gender = pedigree.gender ? parseInt(pedigree.gender) : null;
+                const brotherCount = pedigree.brotherCount ? parseInt(pedigree.brotherCount) : null;
+                const sisterCount = pedigree.sisterCount ? parseInt(pedigree.sisterCount) : null;
+
+                await prisma.pedigree.upsert({
+                  where: { pedigreeId: pedigree.pedigreeId.toString() },
+                  update: {
+                    title: pedigree.title || null,
+                    catName: pedigree.catName || '',
+                    catName2: pedigree.catName2 || null,
+                    breedCode,
+                    gender,
+                    eyeColor: pedigree.eyeColor || null,
+                    coatColorCode,
+                    birthDate,
+                    registrationDate,
+                    breederName: pedigree.breederName || null,
+                    ownerName: pedigree.ownerName || null,
+                    brotherCount,
+                    sisterCount,
+                    notes: pedigree.notes || null,
+                    notes2: pedigree.notes2 || null,
+                    otherNo: pedigree.otherNo || null,
+                    oldCode: pedigree.oldCode || null,
+                    // Father information - CSVの正確なフィールド名でマッピング
+                    fatherTitle: pedigree.fatherTitle || null,
+                    fatherName: pedigree.fatherName || null, // FatherName -> fatherName
+                    fatherCatName2: pedigree.fatherCatName2 || null, // FatherCatName2 -> fatherCatName2
+                    fatherCoatColor: pedigree.fatherCoatColor || null,
+                    fatherEyeColor: pedigree.fatherEyeColor || null,
+                    fatherJCU: pedigree.fatherJCU || null,
+                    fatherOtherCode: pedigree.fatherOtherCode || null,
+                    // Mother information - CSVの正確なフィールド名でマッピング
+                    motherTitle: pedigree.motherTitle || null,
+                    motherName: pedigree.motherCatName || null, // MotherCatName -> motherName
+                    motherCatName2: pedigree.motherCatName2 || null, // MotherCatName2 -> motherCatName2
+                    motherCoatColor: pedigree.motherCoatColor || null,
+                    motherEyeColor: pedigree.motherEyeColor || null,
+                    motherJCU: pedigree.motherJCU || null,
+                    motherOtherCode: pedigree.motherOtherCode || null,
+                    // Grandparent information - 色フィールド追加
+                    ffTitle: pedigree.ffTitle || null,
+                    ffCatName: pedigree.ffCatName || null,
+                    ffCatColor: pedigree.ffCatColor || null,
+                    ffJCU: pedigree.ffJCU || null,
+                    fmTitle: pedigree.fmTitle || null,
+                    fmCatName: pedigree.fmCatName || null,
+                    fmCatColor: pedigree.fmCatColor || null,
+                    fmJCU: pedigree.fmJCU || null,
+                    mfTitle: pedigree.mfTitle || null,
+                    mfCatName: pedigree.mfCatName || null,
+                    mfCatColor: pedigree.mfCatColor || null,
+                    mfJCU: pedigree.mfJCU || null,
+                    mmTitle: pedigree.mmTitle || null,
+                    mmCatName: pedigree.mmCatName || null,
+                    mmCatColor: pedigree.mmCatColor || null,
+                    mmJCU: pedigree.mmJCU || null,
+                    // Great-grandparent information - 色フィールド追加
+                    fffTitle: pedigree.fffTitle || null,
+                    fffCatName: pedigree.fffCatName || null,
+                    fffCatColor: pedigree.fffCatColor || null,
+                    fffJCU: pedigree.fffJCU || null,
+                    ffmTitle: pedigree.ffmTitle || null,
+                    ffmCatName: pedigree.ffmCatName || null,
+                    ffmCatColor: pedigree.ffmCatColor || null,
+                    ffmJCU: pedigree.ffmJCU || null,
+                    fmfTitle: pedigree.fmfTitle || null,
+                    fmfCatName: pedigree.fmfCatName || null,
+                    fmfCatColor: pedigree.fmfCatColor || null,
+                    fmfJCU: pedigree.fmfJCU || null,
+                    fmmTitle: pedigree.fmmTitle || null,
+                    fmmCatName: pedigree.fmmCatName || null,
+                    fmmCatColor: pedigree.fmmCatColor || null,
+                    fmmJCU: pedigree.fmmJCU || null,
+                    mffTitle: pedigree.mffTitle || null,
+                    mffCatName: pedigree.mffCatName || null,
+                    mffCatColor: pedigree.mffCatColor || null,
+                    mffJCU: pedigree.mffJCU || null,
+                    mfmTitle: pedigree.mfmTitle || null,
+                    mfmCatName: pedigree.mfmCatName || null,
+                    mfmCatColor: pedigree.mfmCatColor || null,
+                    mfmJCU: pedigree.mfmJCU || null,
+                    mmfTitle: pedigree.mmfTitle || null,
+                    mmfCatName: pedigree.mmfCatName || null,
+                    mmfCatColor: pedigree.mmfCatColor || null,
+                    mmfJCU: pedigree.mmfJCU || null,
+                    mmmTitle: pedigree.mmmTitle || null,
+                    mmmCatName: pedigree.mmmCatName || null,
+                    mmmCatColor: pedigree.mmmCatColor || null,
+                    mmmJCU: pedigree.mmmJCU || null,
+                  },
+                  create: {
+                    pedigreeId: pedigree.pedigreeId.toString(),
+                    title: pedigree.title || null,
+                    catName: pedigree.catName || '',
+                    catName2: pedigree.catName2 || null,
+                    breedCode,
+                    gender,
+                    eyeColor: pedigree.eyeColor || null,
+                    coatColorCode,
+                    birthDate,
+                    registrationDate,
+                    breederName: pedigree.breederName || null,
+                    ownerName: pedigree.ownerName || null,
+                    brotherCount,
+                    sisterCount,
+                    notes: pedigree.notes || null,
+                    notes2: pedigree.notes2 || null,
+                    otherNo: pedigree.otherNo || null,
+                    oldCode: pedigree.oldCode || null,
+                    // Father information - CSVの正確なフィールド名でマッピング
+                    fatherTitle: pedigree.fatherTitle || null,
+                    fatherName: pedigree.fatherName || null, // FatherName -> fatherName
+                    fatherCatName2: pedigree.fatherCatName2 || null, // FatherCatName2 -> fatherCatName2
+                    fatherCoatColor: pedigree.fatherCoatColor || null,
+                    fatherEyeColor: pedigree.fatherEyeColor || null,
+                    fatherJCU: pedigree.fatherJCU || null,
+                    fatherOtherCode: pedigree.fatherOtherCode || null,
+                    // Mother information - CSVの正確なフィールド名でマッピング
+                    motherTitle: pedigree.motherTitle || null,
+                    motherName: pedigree.motherCatName || null, // MotherCatName -> motherName
+                    motherCatName2: pedigree.motherCatName2 || null, // MotherCatName2 -> motherCatName2
+                    motherCoatColor: pedigree.motherCoatColor || null,
+                    motherEyeColor: pedigree.motherEyeColor || null,
+                    motherJCU: pedigree.motherJCU || null,
+                    motherOtherCode: pedigree.motherOtherCode || null,
+                    // Grandparent information - 色フィールド追加
+                    ffTitle: pedigree.ffTitle || null,
+                    ffCatName: pedigree.ffCatName || null,
+                    ffCatColor: pedigree.ffCatColor || null,
+                    ffJCU: pedigree.ffJCU || null,
+                    fmTitle: pedigree.fmTitle || null,
+                    fmCatName: pedigree.fmCatName || null,
+                    fmCatColor: pedigree.fmCatColor || null,
+                    fmJCU: pedigree.fmJCU || null,
+                    mfTitle: pedigree.mfTitle || null,
+                    mfCatName: pedigree.mfCatName || null,
+                    mfCatColor: pedigree.mfCatColor || null,
+                    mfJCU: pedigree.mfJCU || null,
+                    mmTitle: pedigree.mmTitle || null,
+                    mmCatName: pedigree.mmCatName || null,
+                    mmCatColor: pedigree.mmCatColor || null,
+                    mmJCU: pedigree.mmJCU || null,
+                    // Great-grandparent information - 色フィールド追加
+                    fffTitle: pedigree.fffTitle || null,
+                    fffCatName: pedigree.fffCatName || null,
+                    fffCatColor: pedigree.fffCatColor || null,
+                    fffJCU: pedigree.fffJCU || null,
+                    ffmTitle: pedigree.ffmTitle || null,
+                    ffmCatName: pedigree.ffmCatName || null,
+                    ffmCatColor: pedigree.ffmCatColor || null,
+                    ffmJCU: pedigree.ffmJCU || null,
+                    fmfTitle: pedigree.fmfTitle || null,
+                    fmfCatName: pedigree.fmfCatName || null,
+                    fmfCatColor: pedigree.fmfCatColor || null,
+                    fmfJCU: pedigree.fmfJCU || null,
+                    fmmTitle: pedigree.fmmTitle || null,
+                    fmmCatName: pedigree.fmmCatName || null,
+                    fmmCatColor: pedigree.fmmCatColor || null,
+                    fmmJCU: pedigree.fmmJCU || null,
+                    mffTitle: pedigree.mffTitle || null,
+                    mffCatName: pedigree.mffCatName || null,
+                    mffCatColor: pedigree.mffCatColor || null,
+                    mffJCU: pedigree.mffJCU || null,
+                    mfmTitle: pedigree.mfmTitle || null,
+                    mfmCatName: pedigree.mfmCatName || null,
+                    mfmCatColor: pedigree.mfmCatColor || null,
+                    mfmJCU: pedigree.mfmJCU || null,
+                    mmfTitle: pedigree.mmfTitle || null,
+                    mmfCatName: pedigree.mmfCatName || null,
+                    mmfJCU: pedigree.mmfJCU || null,
+                    mmmTitle: pedigree.mmmTitle || null,
+                    mmmCatName: pedigree.mmmCatName || null,
+                    mmmJCU: pedigree.mmmJCU || null,
+                  },
+                });
+              } catch (pedigreeError) {
+                console.warn(`⚠️ 血統書 ${pedigree.pedigreeId} の処理中にエラー:`, pedigreeError);
+              }
+            }
+          }
+
+          console.log(`✅ ${pedigrees.length}件の血統書データをインポートしました`);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on('error', reject);
+  });
+}
+
+// ユーティリティ関数: 日付解析
+function parseDate(dateString: string): Date | null {
+  if (!dateString || dateString.trim() === '') return null;
+
+  try {
+    // YYYY.MM.DD形式に対応
+    const cleanedDate = dateString.replace(/\./g, '-');
+    const date = new Date(cleanedDate);
+    return isNaN(date.getTime()) ? null : date;
+  } catch {
+    return null;
+  }
+}
+
+// スクリプト実行部分
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  const csvFileName = args[0];
+  const skipBreeds = args.includes('--skip-breeds');
+  const skipCoatColors = args.includes('--skip-colors');
+  const skipPedigrees = args.includes('--skip-pedigrees');
+  const batchSizeArg = args.find(arg => arg.startsWith('--batch-size='));
+  const batchSize = batchSizeArg ? parseInt(batchSizeArg.split('=')[1]) : 100;
+
+  console.log('📋 インポート設定:');
+  console.log(`   📁 CSVファイル: ${csvFileName || 'デフォルト'}`);
+  console.log(`   🐱 猫種インポート: ${skipBreeds ? 'スキップ' : '実行'}`);
+  console.log(`   🎨 毛色インポート: ${skipCoatColors ? 'スキップ' : '実行'}`);
+  console.log(`   📜 血統書インポート: ${skipPedigrees ? 'スキップ' : '実行'}`);
+  console.log(`   📦 バッチサイズ: ${batchSize}`);
+
+  importNewStructureCsvData(csvFileName, {
+    skipBreeds,
+    skipCoatColors,
+    skipPedigrees,
+    batchSize,
+  })
+    .then(() => {
+      console.log('🎉 新しいCSV構造でのインポートが完了しました！');
+      process.exit(0);
+    })
+    .catch(error => {
+      console.error('💥 インポート処理でエラーが発生しました:', error);
+      process.exit(1);
+    });
+}
+
+export { importNewStructureCsvData, importNewStructurePedigrees };

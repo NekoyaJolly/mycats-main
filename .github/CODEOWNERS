@@ -1,0 +1,29 @@
+# 🐱 Cat Management System - Code Owners
+# このファイルは、プルリクエスト時に自動的にレビュワーを設定します
+
+# Global owner - すべてのファイルに対してレビューが必要
+* @NekoyaJolly
+
+# Backend specific
+/backend/ @NekoyaJolly
+/backend/src/ @NekoyaJolly
+/backend/prisma/ @NekoyaJolly
+
+# Frontend specific  
+/cat-ui-test/ @NekoyaJolly
+
+# Database and migrations
+/backend/prisma/migrations/ @NekoyaJolly
+*.sql @NekoyaJolly
+
+# Configuration files
+/.github/ @NekoyaJolly
+/package.json @NekoyaJolly
+/backend/package.json @NekoyaJolly
+/cat-ui-test/package.json @NekoyaJolly
+/.prettierrc @NekoyaJolly
+/tsconfig.json @NekoyaJolly
+
+# Documentation
+*.md @NekoyaJolly
+/docs/ @NekoyaJolly
