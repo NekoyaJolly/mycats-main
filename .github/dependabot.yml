@@ -12,9 +12,9 @@ updates:
       timezone: 'Asia/Tokyo'
     open-pull-requests-limit: 5
     reviewers:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     assignees:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     commit-message:
       prefix: '🔧 backend'
       include: 'scope'
@@ -32,9 +32,9 @@ updates:
       timezone: 'Asia/Tokyo'
     open-pull-requests-limit: 5
     reviewers:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     assignees:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     commit-message:
       prefix: '🎨 frontend'
       include: 'scope'
@@ -52,9 +52,9 @@ updates:
       timezone: 'Asia/Tokyo'
     open-pull-requests-limit: 3
     reviewers:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     assignees:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     commit-message:
       prefix: '📦 root'
       include: 'scope'
@@ -67,13 +67,12 @@ updates:
     directory: '/'
     schedule:
       interval: 'monthly'
-      day: '1'
       time: '09:00'
       timezone: 'Asia/Tokyo'
     reviewers:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     assignees:
-      - 'NekoyaJolly'
+      - NekoyaJolly
     commit-message:
       prefix: '🔄 actions'
       include: 'scope'
