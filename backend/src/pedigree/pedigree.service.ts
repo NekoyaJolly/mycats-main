@@ -143,46 +143,75 @@ export class PedigreeService {
   async findAll(query: PedigreeQueryDto) {
     const {
       page = 1,
-      limit = 10,
+      limit = 20, // デフォルト値を20に増加
       search,
-      genderCode, // 設計書に合わせて変更
+      genderCode,
       catName2,
       eyeColor,
       sortBy = 'createdAt',
       sortOrder = 'desc',
     } = query;
 
-    const skip = (page - 1) * limit;
+    // ページネーション制限
+    const maxLimit = 100;
+    const safeLimit = Math.min(limit, maxLimit);
+    const skip = (page - 1) * safeLimit;
     const where: any = {};
 
-    // Search functionality
+    // 検索機能（インデックス最適化のため、必要なフィールドのみ）
     if (search) {
       where.OR = [
         { catName: { contains: search, mode: 'insensitive' } },
-        { title: { contains: search, mode: 'insensitive' } },
+        { pedigreeId: { contains: search, mode: 'insensitive' } },
         { breederName: { contains: search, mode: 'insensitive' } },
         { ownerName: { contains: search, mode: 'insensitive' } },
-        { fatherCatName: { contains: search, mode: 'insensitive' } }, // 設計書準拠
-        { motherCatName: { contains: search, mode: 'insensitive' } }, // 設計書準拠
       ];
     }
 
-    // Filters（設計書に合わせて変更）
-    if (genderCode) where.genderCode = parseInt(genderCode); // 設計書に合わせて変更
+    // フィルター
+    if (genderCode) where.genderCode = parseInt(genderCode);
     if (eyeColor) where.eyeColor = { contains: eyeColor, mode: 'insensitive' };
     if (catName2) where.catName2 = { contains: catName2, mode: 'insensitive' };
 
+    // パフォーマンス最適化：必要なフィールドのみ選択
     const [data, total] = await Promise.all([
       this.prisma.pedigree.findMany({
         where,
         skip,
-        take: limit,
+        take: safeLimit,
         orderBy: { [sortBy]: sortOrder },
-        include: {
-          breed: true,
-          color: true,
-          genderList: true, // 設計書に合わせて変更
-          cat: true,
+        select: {
+          id: true,
+          pedigreeId: true,
+          title: true,
+          catName: true,
+          catName2: true,
+          genderCode: true,
+          eyeColor: true,
+          birthDate: true,
+          breederName: true,
+          ownerName: true,
+          createdAt: true,
+          updatedAt: true,
+          // リレーション情報（必要最小限）
+          breed: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          color: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          genderList: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       }),
       this.prisma.pedigree.count({ where }),
@@ -193,8 +222,10 @@ export class PedigreeService {
       meta: {
         total,
         page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        limit: safeLimit,
+        totalPages: Math.ceil(total / safeLimit),
+        hasNext: total > page * safeLimit,
+        hasPrev: page > 1,
       },
     };
   }

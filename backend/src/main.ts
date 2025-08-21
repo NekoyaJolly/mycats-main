@@ -4,19 +4,16 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { validateAndLogConfig } from './config/env.validation';
 
 async function bootstrap() {
-  console.log('Starting NestJS application...');
-  console.log(
-    'DATABASE_URL:',
-    process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':****@'),
-  ); // パスワードを隠す
-  console.log('PORT:', process.env.PORT || 3004);
-
+  // 環境変数の検証
+  const config = validateAndLogConfig();
+  
   const logger = new Logger('Bootstrap');
 
   try {
-    logger.log('Starting Cat Management System API...');
+    logger.log('🚀 Cat Management System API を開始中...');
 
     const app = await NestFactory.create(AppModule);
 
@@ -27,13 +24,11 @@ async function bootstrap() {
     app.enableCors({
       origin:
         process.env.NODE_ENV === 'production'
-          ? process.env.ALLOWED_ORIGINS?.split(',') || [
-              'https://yourdomain.com',
-            ]
+          ? config.CORS_ORIGIN?.split(',') || ['https://mycats.example.com']
           : [
+              `http://localhost:${config.FRONTEND_PORT}`,
               'http://localhost:3000',
               'http://localhost:3002',
-              'http://localhost:3003',
               'http://localhost:3005',
             ],
       credentials: true,
@@ -85,18 +80,18 @@ async function bootstrap() {
 
     // Swagger documentation
     if (process.env.NODE_ENV !== 'production') {
-      const config = new DocumentBuilder()
+      const swaggerConfig = new DocumentBuilder()
         .setTitle('Cat Management System API')
         .setDescription('API for managing cat breeding and care records')
         .setVersion('1.0')
         .addBearerAuth()
         .build();
 
-      const document = SwaggerModule.createDocument(app, config);
+      const document = SwaggerModule.createDocument(app, swaggerConfig);
       SwaggerModule.setup('api/docs', app, document);
     }
 
-    const port = process.env.PORT || 3001;
+    const port = config.BACKEND_PORT;
     await app.listen(port);
 
     logger.log(`🚀 Application is running on: http://localhost:${port}`);

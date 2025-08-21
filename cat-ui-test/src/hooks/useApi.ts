@@ -89,12 +89,27 @@ export function useCats(
   params?: CatQueryParams,
   options?: UseQueryOptions<ApiResponse<Cat[]>, ApiError>,
 ) {
-  return useQuery({
+  const query = useQuery({
     queryKey: queryKeys.cats.list(params || {}),
     queryFn: () => apiClient.getCats(params),
     staleTime: 5 * 60 * 1000, // 5分間はキャッシュを新鮮として扱う
+    retry: (failureCount, error) => {
+      // ネットワークエラーの場合のみリトライ
+      if (error.code === 'NETWORK_ERROR') {
+        return failureCount < 3;
+      }
+      return false;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 指数バックオフ
     ...options,
   });
+
+  // エラー時の通知処理
+  if (query.error && query.error.code !== 'NETWORK_ERROR') {
+    console.error('猫データの取得に失敗しました:', query.error);
+  }
+
+  return query;
 }
 
 /**
@@ -136,7 +151,7 @@ export function useCreateCat(
 
   return useMutation({
     mutationFn: (catData: Partial<Cat>) => apiClient.createCat(catData),
-    onSuccess: data => {
+    onSuccess: () => {
       // 関連するクエリのキャッシュを無効化
       queryClient.invalidateQueries({ queryKey: queryKeys.cats.lists() });
       queryClient.invalidateQueries({ queryKey: queryKeys.cats.statistics() });

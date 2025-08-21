@@ -220,11 +220,19 @@ class ApiClient {
         throw error;
       }
 
-      // ネットワークエラーなど
+      // ネットワークエラーやその他の予期しないエラー
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new ApiError(
+          'ネットワークエラーが発生しました。接続を確認してください。',
+          0,
+          'NETWORK_ERROR'
+        );
+      }
+
       throw new ApiError(
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.message : '予期しないエラーが発生しました',
         0,
-        'NETWORK_ERROR',
+        'UNKNOWN_ERROR'
       );
     }
   }
