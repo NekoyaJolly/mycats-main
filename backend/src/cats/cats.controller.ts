@@ -8,8 +8,10 @@ import {
   Delete,
   Query,
   HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto, CatQueryDto } from './dto';
 
@@ -27,6 +29,8 @@ export class CatsController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(5 * 60 * 1000) // 5 minutes cache for cats list
   @ApiOperation({ summary: '猫データを検索・一覧取得' })
   @ApiResponse({ status: HttpStatus.OK, description: '猫データの一覧' })
   @ApiQuery({ name: 'page', required: false, description: 'ページ番号', example: 1 })
@@ -43,6 +47,8 @@ export class CatsController {
   }
 
   @Get('statistics')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(10 * 60 * 1000) // 10 minutes cache for statistics
   @ApiOperation({ summary: '猫データの統計情報を取得' })
   @ApiResponse({ status: HttpStatus.OK, description: '統計情報' })
   getStatistics() {

@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
   console.log('Starting NestJS application...');
@@ -13,19 +15,25 @@ async function bootstrap() {
   try {
     logger.log('Starting Cat Management System API...');
 
-    const app = await NestFactory.create(AppModule, {
-      cors: {
-        origin:
-          process.env.NODE_ENV === 'production'
-            ? ['https://yourdomain.com']
-            : [
-                'http://localhost:3000',
-                'http://localhost:3002',
-                'http://localhost:3003',
-                'http://localhost:3005',
-              ],
-        credentials: true,
-      },
+    const app = await NestFactory.create(AppModule);
+
+    // Security headers
+    app.use(helmet());
+
+    // Enhanced CORS configuration
+    app.enableCors({
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']
+          : [
+              'http://localhost:3000',
+              'http://localhost:3002',
+              'http://localhost:3003',
+              'http://localhost:3005',
+            ],
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
     });
 
     // Global validation pipe
@@ -36,6 +44,9 @@ async function bootstrap() {
         transform: true,
       })
     );
+
+    // Global exception filter
+    app.useGlobalFilters(new GlobalExceptionFilter());
 
     // API prefix
     app.setGlobalPrefix('api/v1');

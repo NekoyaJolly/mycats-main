@@ -8,8 +8,10 @@ import {
   Delete,
   Query,
   HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { BreedsService } from './breeds.service';
 import { CreateBreedDto, UpdateBreedDto, BreedQueryDto } from './dto';
 
@@ -27,6 +29,8 @@ export class BreedsController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(15 * 60 * 1000) // 15 minutes cache for breeds list (relatively static data)
   @ApiOperation({ summary: '品種データを検索・一覧取得' })
   @ApiResponse({ status: HttpStatus.OK, description: '品種データの一覧' })
   @ApiQuery({ name: 'page', required: false, description: 'ページ番号', example: 1 })
@@ -39,6 +43,8 @@ export class BreedsController {
   }
 
   @Get('statistics')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(30 * 60 * 1000) // 30 minutes cache for breed statistics
   @ApiOperation({ summary: '品種データの統計情報を取得' })
   @ApiResponse({ status: HttpStatus.OK, description: '統計情報' })
   getStatistics() {

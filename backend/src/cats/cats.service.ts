@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCatDto, UpdateCatDto, CatQueryDto } from './dto';
+import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
 
 @Injectable()
 export class CatsService {
@@ -77,13 +78,58 @@ export class CatsService {
         skip,
         take: limit,
         include: {
-          breed: true,
-          color: true,
-          pedigrees: {
-            include: {
-              breed: true,
-              color: true,
-            },
+          breed: {
+            select: { id: true, name: true, code: true }
+          },
+          color: {
+            select: { id: true, name: true, code: true }
+          },
+          owner: {
+            select: { id: true, firstName: true, lastName: true }
+          },
+          // Optimize: Only include basic info for related cats
+          father: {
+            select: { id: true, name: true, registrationId: true }
+          },
+          mother: {
+            select: { id: true, name: true, registrationId: true }
+          },
+          // Optimize: Limit breeding records
+          maleBreedingRecords: {
+            take: 3,
+            orderBy: { breedingDate: 'desc' },
+            select: {
+              id: true,
+              breedingDate: true,
+              status: true,
+              female: {
+                select: { id: true, name: true }
+              }
+            }
+          },
+          femaleBreedingRecords: {
+            take: 3,
+            orderBy: { breedingDate: 'desc' },
+            select: {
+              id: true,
+              breedingDate: true,
+              status: true,
+              male: {
+                select: { id: true, name: true }
+              }
+            }
+          },
+          // Optimize: Limit care records
+          careRecords: {
+            take: 5,
+            orderBy: { careDate: 'desc' },
+            select: {
+              id: true,
+              careType: true,
+              careDate: true,
+              nextDueDate: true,
+              description: true
+            }
           },
         },
         orderBy: {
@@ -93,15 +139,7 @@ export class CatsService {
       this.prisma.cat.count({ where }),
     ]);
 
-    return {
-      data: cats,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+    return new PaginatedResponseDto(cats, page, limit, total);
   }
 
   async findOne(id: string) {

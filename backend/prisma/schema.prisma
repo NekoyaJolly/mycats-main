@@ -102,6 +102,13 @@ model Cat {
   pedigrees             Pedigree[]
   schedules             Schedule[]
 
+  @@index([ownerId])
+  @@index([breedName])
+  @@index([colorName])
+  @@index([birthDate])
+  @@index([isActive])
+  @@index([gender])
+  @@index([createdAt])
   @@map("cats")
 }
 
@@ -122,6 +129,11 @@ model BreedingRecord {
   male            Cat            @relation("MaleBreeding", fields: [maleId], references: [id])
   recorder        User           @relation(fields: [recordedBy], references: [id])
 
+  @@index([maleId])
+  @@index([femaleId])
+  @@index([breedingDate])
+  @@index([expectedDueDate])
+  @@index([status])
   @@map("breeding_records")
 }
 
@@ -141,6 +153,10 @@ model CareRecord {
   cat          Cat       @relation(fields: [catId], references: [id])
   recorder     User      @relation(fields: [recordedBy], references: [id])
 
+  @@index([catId])
+  @@index([careDate])
+  @@index([nextDueDate])
+  @@index([careType])
   @@map("care_records")
 }
 
