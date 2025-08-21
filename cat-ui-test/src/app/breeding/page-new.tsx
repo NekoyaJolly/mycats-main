@@ -36,8 +36,8 @@ interface BreedingRecord {
 }
 
 export default function BreedingPage() {
-  const [breedingRecords] = useState<BreedingRecord[]>([]);
-  // const [loading, setLoading] = useState(true);
+  const [breedingRecords, setBreedingRecords] = useState<BreedingRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // TODO: 実際のAPIエンドポイントに接続
   // const { data, isLoading } = useQuery(['breeding-records'], () =>

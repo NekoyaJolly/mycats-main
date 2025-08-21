@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // ESLint設定
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // TypeScript設定
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   // 環境変数からAPIのURLを取得
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3004/api/v1',

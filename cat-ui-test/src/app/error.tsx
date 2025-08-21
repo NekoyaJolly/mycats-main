@@ -1,30 +1,34 @@
-'use client';
+"use client";
 
-import { Container, Text, Title, Button, Stack } from '@mantine/core';
-import Link from 'next/link';
+import { useEffect } from "react";
+import { Button, Title, Text, Container, Group } from "@mantine/core";
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    // Log the error to an error reporting service
+    console.error(error);
+  }, [error]);
+
   return (
-    <Container size='sm' py='xl'>
-      <Stack align='center' gap='lg'>
-        <Title order={1} size='h1'>
-          エラーが発生しました
-        </Title>
-        <Text c='dimmed' ta='center'>
-          申し訳ありません。予期しないエラーが発生しました。
-        </Text>
-        <Stack gap='sm'>
-          <Button onClick={reset}>再試行</Button>
-          <Button component={Link} href='/' variant='outline'>
-            ホームに戻る
-          </Button>
-        </Stack>
-      </Stack>
+    <Container>
+      <Title>Something went wrong!</Title>
+      <Text>{error.message}</Text>
+      <Group justify="center">
+        <Button
+          onClick={
+            // Attempt to recover by trying to re-render the segment
+            () => reset()
+          }
+        >
+          Try again
+        </Button>
+      </Group>
     </Container>
   );
 }

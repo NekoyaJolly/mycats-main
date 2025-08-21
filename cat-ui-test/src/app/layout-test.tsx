@@ -1,6 +1,5 @@
-import '@mantine/core/styles.css';
 import type { Metadata } from 'next';
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: '猫生体管理アプリ',
@@ -14,11 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang='ja'>
-      <head>
-        <ColorSchemeScript />
-      </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <div style={{ minHeight: '100vh', padding: '20px' }}>
+          {children}
+        </div>
       </body>
     </html>
   );

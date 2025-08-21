@@ -24,7 +24,7 @@
 
 ## 📋 前提条件
 
-- **Node.js v22.18.0以上** (LTS版推奨)
+- **Node.js v22.0.0以上** (LTS版推奨)
 - **npm v10.0.0以上**
 - **PostgreSQL 15以上**
 - **Git**
@@ -33,10 +33,10 @@
 
 ```bash
 # Node.js バージョン確認
-node --version  # v22.18.0以上
+node --version  # v22.0.0以上
 
 # npm バージョン確認
-npm --version   # v10.9.3以上
+npm --version   # v10.0.0以上
 
 # PostgreSQL バージョン確認
 postgres --version  # PostgreSQL 15以上
