@@ -18,7 +18,10 @@ interface CoatColorRow {
 async function importBreeds() {
   console.log('🔄 猫種データをインポート中...');
 
-  const csvPath = path.join(__dirname, '../../NewPedigree/猫種データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/猫種データUTF8Ver.csv',
+  );
   const csvData = fs.readFileSync(csvPath, 'utf-8');
 
   const records: BreedRow[] = parse(csvData, {
@@ -58,13 +61,18 @@ async function importBreeds() {
     }
   }
 
-  console.log(`✅ 猫種データインポート完了: ${imported} 件インポート, ${skipped} 件スキップ`);
+  console.log(
+    `✅ 猫種データインポート完了: ${imported} 件インポート, ${skipped} 件スキップ`,
+  );
 }
 
 async function importCoatColors() {
   console.log('🔄 色柄データをインポート中...');
 
-  const csvPath = path.join(__dirname, '../../NewPedigree/色柄データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/色柄データUTF8Ver.csv',
+  );
   const csvData = fs.readFileSync(csvPath, 'utf-8');
 
   const records: CoatColorRow[] = parse(csvData, {
@@ -104,7 +112,9 @@ async function importCoatColors() {
     }
   }
 
-  console.log(`✅ 色柄データインポート完了: ${imported} 件インポート, ${skipped} 件スキップ`);
+  console.log(
+    `✅ 色柄データインポート完了: ${imported} 件インポート, ${skipped} 件スキップ`,
+  );
 }
 
 async function main() {

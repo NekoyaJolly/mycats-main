@@ -11,15 +11,21 @@ export class AppLogger extends ConsoleLogger {
   constructor() {
     const environment = process.env.NODE_ENV || 'development';
     super('CatManagementSystem', {
-      logLevels: AppLogger.logLevels[environment] || AppLogger.logLevels.development,
+      logLevels:
+        AppLogger.logLevels[environment] || AppLogger.logLevels.development,
     });
   }
 
-  formatMessage(level: string, message: string, context?: string, stack?: string) {
+  formatMessage(
+    level: string,
+    message: string,
+    context?: string,
+    stack?: string,
+  ) {
     const timestamp = new Date().toISOString();
     const contextStr = context ? ` [${context}]` : '';
     const stackStr = stack ? `\n${stack}` : '';
-    
+
     return `[${timestamp}] [${level.toUpperCase()}]${contextStr} ${message}${stackStr}`;
   }
 

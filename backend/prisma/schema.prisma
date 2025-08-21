@@ -192,111 +192,120 @@ model Tag {
 
 model Pedigree {
   id                    String      @id @default(uuid())
-  pedigreeId            String      @unique
+  pedigreeId            String      @unique              // PedigreeID (text, NO NULL)
+  title                 String?                           // Title (text, YES)
+  catName               String                            // CatName (text, YES)
+  catName2              String?                           // CatName2 (text, YES)
+  breedCode             Int?                              // BreedCode (integer, YES)
+  genderCode            Int?                              // GenderCode (integer, YES) - 設計書に合わせて変更
+  eyeColor              String?                           // EyeColor (text, YES)
+  coatColorCode         Int?                              // CoatColorCode (integer, YES)
+  birthDate             String?                           // BirthDate (text, YES) - 設計書に合わせてtext型
+  breederName           String?                           // BreederName (text, YES)
+  ownerName             String?                           // OwnerName (text, YES)
+  registrationDate      String?                           // RegistrationDate (text, YES) - 設計書に合わせてtext型
+  brotherCount          Int?                              // BrotherCount (integer, YES)
+  sisterCount           Int?                              // SisterCount (integer, YES)
+  notes                 String?                           // Notes (text, YES)
+  notes2                String?                           // Notes2 (text, YES)
+  otherNo               String?                           // OtherNo (text, YES)
+  
+  // 父猫情報
+  fatherTitle           String?                           // FatherTitle (text, YES)
+  fatherCatName         String?                           // FatherCatName (text, YES) - 設計書で必要
+  fatherCatName2        String?                           // FatherCatName2 (text, YES)
+  fatherCoatColor       String?                           // FatherCoatColor (text, YES)
+  fatherEyeColor        String?                           // FatherEyeColor (text, YES)
+  fatherJCU             String?                           // FatherJCU (text, YES)
+  fatherOtherCode       String?                           // FatherOtherCode (text, YES)
+  
+  // 母猫情報
+  motherTitle           String?                           // MotherTitle (text, YES)
+  motherCatName         String?                           // MotherCatName (text, YES) - 設計書で必要
+  motherCatName2        String?                           // MotherCatName2 (text, YES)
+  motherCoatColor       String?                           // MotherCoatColor (text, YES)
+  motherEyeColor        String?                           // MotherEyeColor (text, YES)
+  motherJCU             String?                           // MotherJCU (text, YES)
+  motherOtherCode       String?                           // MotherOtherCode (text, YES)
+  
+  // 祖父母情報 (父方祖父母)
+  ffTitle               String?                           // FFTitle (text, YES)
+  ffCatName             String?                           // FFCatName (text, YES)
+  ffCatColor            String?                           // FFCatColor (text, YES)
+  ffJCU                 String?                           // FFJCU (text, YES)
+  
+  fmTitle               String?                           // FMTitle (text, YES)
+  fmCatName             String?                           // FMCatName (text, YES)
+  fmCatColor            String?                           // FMCatColor (text, YES)
+  fmJCU                 String?                           // FMJCU (text, YES)
+  
+  // 祖父母情報 (母方祖父母)
+  mfTitle               String?                           // MFTitle (text, YES)
+  mfCatName             String?                           // MFCatName (text, YES)
+  mfCatColor            String?                           // MFCatColor (text, YES)
+  mfJCU                 String?                           // MFJCU (text, YES)
+  
+  mmTitle               String?                           // MMTitle (text, YES)
+  mmCatName             String?                           // MMCatName (text, YES)
+  mmCatColor            String?                           // MMCatColor (text, YES)
+  mmJCU                 String?                           // MMJCU (text, YES)
+  
+  // 曾祖父母情報 (父方父方)
+  fffTitle              String?                           // FFFTitle (text, YES)
+  fffCatName            String?                           // FFFCatName (text, YES)
+  fffCatColor           String?                           // FFFCatColor (text, YES)
+  fffJCU                String?                           // FFFJCU (text, YES)
+  
+  ffmTitle              String?                           // FFMTitle (text, YES)
+  ffmCatName            String?                           // FFMCatName (text, YES)
+  ffmCatColor           String?                           // FFMCatColor (text, YES)
+  ffmJCU                String?                           // FFMJCU (text, YES)
+  
+  // 曾祖父母情報 (父方母方)
+  fmfTitle              String?                           // FMFTitle (text, YES)
+  fmfCatName            String?                           // FMFCatName (text, YES)
+  fmfCatColor           String?                           // FMFCatColor (text, YES)
+  fmfJCU                String?                           // FMFJCU (text, YES)
+  
+  fmmTitle              String?                           // FMMTitle (text, YES)
+  fmmCatName            String?                           // FMMCatName (text, YES)
+  fmmCatColor           String?                           // FMMCatColor (text, YES)
+  fmmJCU                String?                           // FMMJCU (text, YES)
+  
+  // 曾祖父母情報 (母方父方)
+  mffTitle              String?                           // MFFTitle (text, YES)
+  mffCatName            String?                           // MFFCatName (text, YES)
+  mffCatColor           String?                           // MFFCatColor (text, YES)
+  mffJCU                String?                           // MFFJCU (text, YES)
+  
+  mfmTitle              String?                           // MFMTitle (text, YES)
+  mfmCatName            String?                           // MFMCatName (text, YES)
+  mfmCatColor           String?                           // MFMCatColor (text, YES)
+  mfmJCU                String?                           // MFMJCU (text, YES)
+  
+  // 曾祖父母情報 (母方母方)
+  mmfTitle              String?                           // MMFTitle (text, YES)
+  mmfCatName            String?                           // MMFCatName (text, YES)
+  mmfCatColor           String?                           // MMFCatColor (text, YES)
+  mmfJCU                String?                           // MMFJCU (text, YES)
+  
+  mmmTitle              String?                           // MMMTitle (text, YES)
+  mmmCatName            String?                           // MMMCatName (text, YES)
+  mmmCatColor           String?                           // MMMCatColor (text, YES)
+  mmmJCU                String?                           // MMMJCU (text, YES)
+  
+  oldCode               String?                           // OldCode (text, YES)
+  
+  // システム管理用フィールド（設計書外だが運用に必要）
   catId                 String?
-  title                 String?
-  catName               String
-  breedCode             Int?
-  gender                Int?
-  eyeColor              String?
-  coatColorCode         Int?
-  birthDate             DateTime?
-  registrationDate      DateTime?
-  breederName           String?
-  ownerName             String?
-  brotherCount          Int?
-  sisterCount           Int?
-  notes                 String?
-  notes2                String?
-  otherNo               String?
-  oldCode               String?
-  fatherPedigreeId      String?
-  motherPedigreeId      String?
-  paternalGrandfatherId String?
-  paternalGrandmotherId String?
-  maternalGrandfatherId String?
-  maternalGrandmotherId String?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
-  catName2              String?
-  fatherCoatColor       String?
-  fatherEyeColor        String?
-  fatherJCU             String?
-  fatherOtherCode       String?
-  fatherTitle           String?
-  ffCatName             String?
-  ffJCU                 String?
-  ffTitle               String?
-  fffCatName            String?
-  fffJCU                String?
-  fffTitle              String?
-  ffmCatName            String?
-  ffmJCU                String?
-  ffmTitle              String?
-  fmCatName             String?
-  fmJCU                 String?
-  fmTitle               String?
-  fmfCatName            String?
-  fmfJCU                String?
-  fmfTitle              String?
-  fmmCatName            String?
-  fmmJCU                String?
-  fmmTitle              String?
-  mfCatName             String?
-  mfJCU                 String?
-  mfTitle               String?
-  mffCatName            String?
-  mffJCU                String?
-  mffTitle              String?
-  mfmCatName            String?
-  mfmJCU                String?
-  mfmTitle              String?
-  mmCatName             String?
-  mmJCU                 String?
-  mmTitle               String?
-  mmfCatName            String?
-  mmfJCU                String?
-  mmfTitle              String?
-  mmmCatName            String?
-  mmmJCU                String?
-  mmmTitle              String?
-  motherCoatColor       String?
-  motherEyeColor        String?
-  motherJCU             String?
-  motherOtherCode       String?
-  motherTitle           String?
-  fatherCatName2        String?
-  fatherName            String?
-  motherCatName2        String?
-  motherName            String?
-  ffCatColor            String?
-  fmCatColor            String?
-  mfCatColor            String?
-  mmCatColor            String?
-  fffCatColor           String?
-  ffmCatColor           String?
-  fmfCatColor           String?
-  fmmCatColor           String?
-  mffCatColor           String?
-  mfmCatColor           String?
-  mmfCatColor           String?
-  mmmCatColor           String?
+  
+  // リレーション (設計書に合わせて修正)
   breed                 Breed?      @relation(fields: [breedCode], references: [code])
   cat                   Cat?        @relation(fields: [catId], references: [id])
   color                 CoatColor?  @relation(fields: [coatColorCode], references: [code])
-  fatherPedigree        Pedigree?   @relation("PedigreeFather", fields: [fatherPedigreeId], references: [id])
-  fatherOf              Pedigree[]  @relation("PedigreeFather")
-  genderList            GenderList? @relation("PedigreeGenderList", fields: [gender], references: [code])
-  maternalGrandfather   Pedigree?   @relation("MatGrandfather", fields: [maternalGrandfatherId], references: [id])
-  maternalGrandfatherOf Pedigree[]  @relation("MatGrandfather")
-  maternalGrandmother   Pedigree?   @relation("MatGrandmother", fields: [maternalGrandmotherId], references: [id])
-  maternalGrandmotherOf Pedigree[]  @relation("MatGrandmother")
-  motherPedigree        Pedigree?   @relation("PedigreeMother", fields: [motherPedigreeId], references: [id])
-  motherOf              Pedigree[]  @relation("PedigreeMother")
-  paternalGrandfather   Pedigree?   @relation("PatGrandfather", fields: [paternalGrandfatherId], references: [id])
-  paternalGrandfatherOf Pedigree[]  @relation("PatGrandfather")
-  paternalGrandmother   Pedigree?   @relation("PatGrandmother", fields: [paternalGrandmotherId], references: [id])
-  paternalGrandmotherOf Pedigree[]  @relation("PatGrandmother")
+  genderList            GenderList? @relation("PedigreeGenderList", fields: [genderCode], references: [code])
 
   @@map("pedigrees")
 }

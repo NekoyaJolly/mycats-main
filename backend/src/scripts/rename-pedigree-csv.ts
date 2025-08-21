@@ -15,7 +15,10 @@ import * as path from 'path';
  * - outputFileName: 出力する新しいCSVファイル名（省略時は自動生成）
  */
 
-async function convertOldCsvToNewStructure(inputFileName?: string, outputFileName?: string) {
+async function convertOldCsvToNewStructure(
+  inputFileName?: string,
+  outputFileName?: string,
+) {
   // デフォルトのファイル名設定
   const defaultInputFile = '血統書データ_古い構造.csv';
   const inputFile = inputFileName || defaultInputFile;
@@ -60,7 +63,9 @@ async function convertOldCsvToNewStructure(inputFileName?: string, outputFileNam
 
     console.log('✅ CSV構造の変換が完了しました');
     console.log(`📁 出力ファイル: ${outputPath}`);
-    console.log(`📊 変換後行数: ${lines.length} (ヘッダー1行 + データ${lines.length - 1}行)`);
+    console.log(
+      `📊 変換後行数: ${lines.length} (ヘッダー1行 + データ${lines.length - 1}行)`,
+    );
 
     // 結果の確認
     const newLines = newContent.split('\n');

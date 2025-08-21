@@ -52,7 +52,11 @@ export default function CatDetailPage() {
     <Box style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       {/* ヘッダー */}
       <Box
-        style={{ backgroundColor: 'white', borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+        style={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid #e9ecef',
+          padding: '1rem 0',
+        }}
       >
         <Container size='xl'>
           <Flex justify='space-between' align='center'>
@@ -85,11 +89,20 @@ export default function CatDetailPage() {
       <Container size='lg' style={{ paddingTop: '2rem' }}>
         {/* メイン詳細カード */}
         <Card shadow='sm' padding='lg' radius='md' withBorder mb='xl'>
-          <Flex gap='xl' align='flex-start' direction={{ base: 'column', md: 'row' }}>
+          <Flex
+            gap='xl'
+            align='flex-start'
+            direction={{ base: 'column', md: 'row' }}
+          >
             <Image
               src={cat.image}
               alt={cat.name}
-              style={{ width: 200, height: 200, objectFit: 'cover', borderRadius: 8 }}
+              style={{
+                width: 200,
+                height: 200,
+                objectFit: 'cover',
+                borderRadius: 8,
+              }}
             />
             <Stack gap='md' style={{ flex: 1 }}>
               <Title order={2}>{cat.name}</Title>

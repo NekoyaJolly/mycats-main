@@ -1,7 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Box, Flex, Heading, Button, Stack, Input, Textarea, Tabs } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Heading,
+  Button,
+  Stack,
+  Input,
+  Textarea,
+  Tabs,
+} from '@chakra-ui/react';
 import { useState } from 'react';
 
 const dummyEditCat = {
@@ -83,7 +92,11 @@ export default function CatRegisterEditPage() {
       <Box style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
         {/* ヘッダー */}
         <Box
-          style={{ backgroundColor: 'white', borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+          style={{
+            backgroundColor: 'white',
+            borderBottom: '1px solid #e9ecef',
+            padding: '1rem 0',
+          }}
         >
           <Container size='xl'>
             <Flex justify='space-between' align='center'>
@@ -120,7 +133,9 @@ export default function CatRegisterEditPage() {
                     label='猫の名前'
                     placeholder='名前を入力してください'
                     value={registerForm.name}
-                    onChange={e => setRegisterForm({ ...registerForm, name: e.target.value })}
+                    onChange={e =>
+                      setRegisterForm({ ...registerForm, name: e.target.value })
+                    }
                     required
                   />
 
@@ -129,7 +144,12 @@ export default function CatRegisterEditPage() {
                       label='品種'
                       placeholder='例: 雑種、アメリカンショートヘア'
                       value={registerForm.breed}
-                      onChange={e => setRegisterForm({ ...registerForm, breed: e.target.value })}
+                      onChange={e =>
+                        setRegisterForm({
+                          ...registerForm,
+                          breed: e.target.value,
+                        })
+                      }
                     />
                     <Select
                       label='性別'
@@ -139,7 +159,12 @@ export default function CatRegisterEditPage() {
                         { value: 'メス', label: 'メス' },
                       ]}
                       value={registerForm.gender}
-                      onChange={value => setRegisterForm({ ...registerForm, gender: value || '' })}
+                      onChange={value =>
+                        setRegisterForm({
+                          ...registerForm,
+                          gender: value || '',
+                        })
+                      }
                       required
                     />
                   </Group>
@@ -150,14 +175,22 @@ export default function CatRegisterEditPage() {
                       placeholder='YYYY-MM-DD'
                       value={registerForm.birthDate}
                       onChange={e =>
-                        setRegisterForm({ ...registerForm, birthDate: e.target.value })
+                        setRegisterForm({
+                          ...registerForm,
+                          birthDate: e.target.value,
+                        })
                       }
                     />
                     <TextInput
                       label='色柄'
                       placeholder='例: 茶トラ、三毛'
                       value={registerForm.color}
-                      onChange={e => setRegisterForm({ ...registerForm, color: e.target.value })}
+                      onChange={e =>
+                        setRegisterForm({
+                          ...registerForm,
+                          color: e.target.value,
+                        })
+                      }
                     />
                   </Group>
 
@@ -166,14 +199,22 @@ export default function CatRegisterEditPage() {
                       label='体重'
                       placeholder='例: 4.2'
                       value={registerForm.weight}
-                      onChange={e => setRegisterForm({ ...registerForm, weight: e.target.value })}
+                      onChange={e =>
+                        setRegisterForm({
+                          ...registerForm,
+                          weight: e.target.value,
+                        })
+                      }
                     />
                     <TextInput
                       label='マイクロチップ'
                       placeholder='マイクロチップ番号'
                       value={registerForm.microchip}
                       onChange={e =>
-                        setRegisterForm({ ...registerForm, microchip: e.target.value })
+                        setRegisterForm({
+                          ...registerForm,
+                          microchip: e.target.value,
+                        })
                       }
                     />
                   </Group>
@@ -183,7 +224,10 @@ export default function CatRegisterEditPage() {
                     placeholder='特徴や性格などを記入してください'
                     value={registerForm.description}
                     onChange={e =>
-                      setRegisterForm({ ...registerForm, description: e.target.value })
+                      setRegisterForm({
+                        ...registerForm,
+                        description: e.target.value,
+                      })
                     }
                     minRows={3}
                   />
@@ -211,7 +255,9 @@ export default function CatRegisterEditPage() {
                     label='猫の名前'
                     placeholder='名前を入力してください'
                     value={editForm.name}
-                    onChange={e => setEditForm({ ...editForm, name: e.target.value })}
+                    onChange={e =>
+                      setEditForm({ ...editForm, name: e.target.value })
+                    }
                     required
                   />
 
@@ -220,7 +266,9 @@ export default function CatRegisterEditPage() {
                       label='品種'
                       placeholder='例: 雑種、アメリカンショートヘア'
                       value={editForm.breed}
-                      onChange={e => setEditForm({ ...editForm, breed: e.target.value })}
+                      onChange={e =>
+                        setEditForm({ ...editForm, breed: e.target.value })
+                      }
                     />
                     <Select
                       label='性別'
@@ -230,7 +278,9 @@ export default function CatRegisterEditPage() {
                         { value: 'メス', label: 'メス' },
                       ]}
                       value={editForm.gender}
-                      onChange={value => setEditForm({ ...editForm, gender: value || '' })}
+                      onChange={value =>
+                        setEditForm({ ...editForm, gender: value || '' })
+                      }
                       required
                     />
                   </Group>
@@ -240,13 +290,17 @@ export default function CatRegisterEditPage() {
                       label='生年月日'
                       placeholder='YYYY-MM-DD'
                       value={editForm.birthDate}
-                      onChange={e => setEditForm({ ...editForm, birthDate: e.target.value })}
+                      onChange={e =>
+                        setEditForm({ ...editForm, birthDate: e.target.value })
+                      }
                     />
                     <TextInput
                       label='色柄'
                       placeholder='例: 茶トラ、三毛'
                       value={editForm.color}
-                      onChange={e => setEditForm({ ...editForm, color: e.target.value })}
+                      onChange={e =>
+                        setEditForm({ ...editForm, color: e.target.value })
+                      }
                     />
                   </Group>
 
@@ -255,13 +309,17 @@ export default function CatRegisterEditPage() {
                       label='体重'
                       placeholder='例: 4.2'
                       value={editForm.weight}
-                      onChange={e => setEditForm({ ...editForm, weight: e.target.value })}
+                      onChange={e =>
+                        setEditForm({ ...editForm, weight: e.target.value })
+                      }
                     />
                     <TextInput
                       label='マイクロチップ'
                       placeholder='マイクロチップ番号'
                       value={editForm.microchip}
-                      onChange={e => setEditForm({ ...editForm, microchip: e.target.value })}
+                      onChange={e =>
+                        setEditForm({ ...editForm, microchip: e.target.value })
+                      }
                     />
                   </Group>
 
@@ -269,12 +327,17 @@ export default function CatRegisterEditPage() {
                     label='備考'
                     placeholder='特徴や性格などを記入してください'
                     value={editForm.description}
-                    onChange={e => setEditForm({ ...editForm, description: e.target.value })}
+                    onChange={e =>
+                      setEditForm({ ...editForm, description: e.target.value })
+                    }
                     minRows={3}
                   />
 
                   <Group justify='center' mt='xl'>
-                    <Button leftSection={<IconDeviceFloppy size={16} />} onClick={handleEditSubmit}>
+                    <Button
+                      leftSection={<IconDeviceFloppy size={16} />}
+                      onClick={handleEditSubmit}
+                    >
                       更新
                     </Button>
                   </Group>
@@ -290,12 +353,16 @@ export default function CatRegisterEditPage() {
   const [editForm, setEditForm] = useState({ ...dummyEditCat });
 
   const handleRegisterChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setRegisterForm({ ...registerForm, [e.target.name]: e.target.value });
   };
   const handleEditChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
@@ -332,7 +399,15 @@ export default function CatRegisterEditPage() {
           </Button>
         </Flex>
       </Box>
-      <Box maxW='2xl' mx='auto' mt='8' p='6' bg='white' borderRadius='md' boxShadow='md'>
+      <Box
+        maxW='2xl'
+        mx='auto'
+        mt='8'
+        p='6'
+        bg='white'
+        borderRadius='md'
+        boxShadow='md'
+      >
         <Tabs.Root
           value={tab}
           onValueChange={details => setTab(details.value)}
@@ -407,8 +482,11 @@ export default function CatRegisterEditPage() {
                     placeholder='性格や特徴など'
                   />
                 </div>
-                <Flex gap="sm" justify='flex-end'>
-                  <Button variant='outline' onClick={() => router.push('/cats')}>
+                <Flex gap='sm' justify='flex-end'>
+                  <Button
+                    variant='outline'
+                    onClick={() => router.push('/cats')}
+                  >
                     キャンセル
                   </Button>
                   <Button colorScheme='brand' type='submit'>
@@ -480,11 +558,18 @@ export default function CatRegisterEditPage() {
                     onChange={handleEditChange}
                   />
                 </div>
-                <Flex gap="sm" justify='flex-end'>
-                  <Button variant='outline' colorScheme='red' onClick={handleDelete}>
+                <Flex gap='sm' justify='flex-end'>
+                  <Button
+                    variant='outline'
+                    colorScheme='red'
+                    onClick={handleDelete}
+                  >
                     削除
                   </Button>
-                  <Button variant='outline' onClick={() => router.push(`/cats/${editForm.id}`)}>
+                  <Button
+                    variant='outline'
+                    onClick={() => router.push(`/cats/${editForm.id}`)}
+                  >
                     キャンセル
                   </Button>
                   <Button colorScheme='brand' type='submit'>

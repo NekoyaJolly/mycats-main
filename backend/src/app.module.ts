@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
+import { APP_FILTER } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { CatsModule } from './cats/cats.module';
@@ -13,6 +14,7 @@ import { CareModule } from './care/care.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { UsersModule } from './users/users.module';
 import { UploadModule } from './upload/upload.module';
+import { GlobalExceptionFilter } from './common/errors/global-exception.filter';
 
 @Module({
   imports: [
@@ -43,6 +45,11 @@ import { UploadModule } from './upload/upload.module';
     UploadModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

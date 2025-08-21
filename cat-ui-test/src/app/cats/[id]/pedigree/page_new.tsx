@@ -1,7 +1,18 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Box, Button, Card, Container, Group, Stack, Title, Text, Flex, Grid } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Group,
+  Stack,
+  Title,
+  Text,
+  Flex,
+  Grid,
+} from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 
@@ -43,7 +54,13 @@ const CatCard = ({
 }) => {
   if (!cat) {
     return (
-      <Card shadow='sm' padding='sm' radius='md' withBorder style={{ minHeight: 60, opacity: 0.3 }}>
+      <Card
+        shadow='sm'
+        padding='sm'
+        radius='md'
+        withBorder
+        style={{ minHeight: 60, opacity: 0.3 }}
+      >
         <Text size='sm' c='dimmed'>
           不明
         </Text>
@@ -89,7 +106,11 @@ export default function PedigreePage() {
     <Box style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       {/* ヘッダー */}
       <Box
-        style={{ backgroundColor: 'white', borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+        style={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid #e9ecef',
+          padding: '1rem 0',
+        }}
       >
         <Container size='xl'>
           <Flex justify='space-between' align='center'>
@@ -114,8 +135,14 @@ export default function PedigreePage() {
           <Grid style={{ minWidth: '1200px' }}>
             {/* 第1列: 本人 */}
             <Grid.Col span={3}>
-              <Stack gap='md' style={{ height: '100%', justifyContent: 'center' }}>
-                <CatCard cat={{ name: pedigreeData.name, color: '茶トラ' }} level={0} />
+              <Stack
+                gap='md'
+                style={{ height: '100%', justifyContent: 'center' }}
+              >
+                <CatCard
+                  cat={{ name: pedigreeData.name, color: '茶トラ' }}
+                  level={0}
+                />
               </Stack>
             </Grid.Col>
 
@@ -130,10 +157,22 @@ export default function PedigreePage() {
             {/* 第3列: 祖父母 */}
             <Grid.Col span={3}>
               <Stack gap='md' style={{ height: '100%' }}>
-                <CatCard cat={pedigreeData.generation2.paternalGrandfather} level={2} />
-                <CatCard cat={pedigreeData.generation2.paternalGrandmother} level={2} />
-                <CatCard cat={pedigreeData.generation2.maternalGrandfather} level={2} />
-                <CatCard cat={pedigreeData.generation2.maternalGrandmother} level={2} />
+                <CatCard
+                  cat={pedigreeData.generation2.paternalGrandfather}
+                  level={2}
+                />
+                <CatCard
+                  cat={pedigreeData.generation2.paternalGrandmother}
+                  level={2}
+                />
+                <CatCard
+                  cat={pedigreeData.generation2.maternalGrandfather}
+                  level={2}
+                />
+                <CatCard
+                  cat={pedigreeData.generation2.maternalGrandmother}
+                  level={2}
+                />
               </Stack>
             </Grid.Col>
 
@@ -188,9 +227,13 @@ export default function PedigreePage() {
             <Text size='sm'>
               • この血統表は4世代（本人 + 親、祖父母、曾祖父母）を表示しています
             </Text>
-            <Text size='sm'>• 各世代は色分けされており、世代が古くなるほど薄い色になります</Text>
+            <Text size='sm'>
+              • 各世代は色分けされており、世代が古くなるほど薄い色になります
+            </Text>
             <Text size='sm'>• 不明な個体は「不明」と表示されます</Text>
-            <Text size='sm'>• より詳細な血統情報が必要な場合は、個別にお問い合わせください</Text>
+            <Text size='sm'>
+              • より詳細な血統情報が必要な場合は、個別にお問い合わせください
+            </Text>
           </Stack>
         </Card>
       </Container>

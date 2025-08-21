@@ -121,7 +121,10 @@ interface PedigreeData {
 
 async function importPedigreeSampleData() {
   const args = process.argv.slice(2);
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データRenamed.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データRenamed.csv',
+  );
 
   // コマンドライン引数を解析
   const rangeArg = args.find(arg => arg.startsWith('--range='));
@@ -171,7 +174,7 @@ async function importPedigreeSampleData() {
             columns: true,
             skip_empty_lines: true,
             trim: true,
-          })
+          }),
         )
         .on('data', (record: PedigreeData) => {
           // 対象IDに含まれる場合のみ追加
@@ -180,7 +183,9 @@ async function importPedigreeSampleData() {
           }
         })
         .on('end', () => {
-          console.log(`📊 対象データ: ${records.length}件 / 指定ID: ${targetIds.length}件`);
+          console.log(
+            `📊 対象データ: ${records.length}件 / 指定ID: ${targetIds.length}件`,
+          );
           resolve();
         })
         .on('error', reject);
@@ -215,15 +220,23 @@ async function importPedigreeSampleData() {
             // Removed: catName: record.CatteryName || null,
             catName: record.CatName,
             breedCode: record.BreedCode ? parseInt(record.BreedCode) : null,
-            gender: record.Gender ? parseInt(record.Gender) : null,
+            genderCode: record.Gender ? parseInt(record.Gender) : null,
             eyeColor: record.EyeColor || null,
-            coatColorCode: record.CoatColorCode ? parseInt(record.CoatColorCode) : null,
-            birthDate: record.BirthDate ? parseDate(record.BirthDate) : null,
-            registrationDate: record.RegistrationDate ? parseDate(record.RegistrationDate) : null,
+            coatColorCode: record.CoatColorCode
+              ? parseInt(record.CoatColorCode)
+              : null,
+            birthDate: record.BirthDate ? parseDate(record.BirthDate).toISOString().split('T')[0] : null,
+            registrationDate: record.RegistrationDate
+              ? parseDate(record.RegistrationDate).toISOString().split('T')[0]
+              : null,
             breederName: record.BreederName || null,
             ownerName: record.OwnerName || null,
-            brotherCount: record.BrotherCount ? parseInt(record.BrotherCount) : null,
-            sisterCount: record.SisterCount ? parseInt(record.SisterCount) : null,
+            brotherCount: record.BrotherCount
+              ? parseInt(record.BrotherCount)
+              : null,
+            sisterCount: record.SisterCount
+              ? parseInt(record.SisterCount)
+              : null,
             notes: record.Notes || null,
             notes2: record.Notes2 || null,
             otherNo: record.OtherNo || null,
@@ -271,7 +284,7 @@ async function importPedigreeSampleData() {
 
       samples.forEach(sample => {
         console.log(
-          `  - ${sample.pedigreeId}: ${sample.title || ''} ${sample.catName || ''} ${sample.catName}`
+          `  - ${sample.pedigreeId}: ${sample.title || ''} ${sample.catName || ''} ${sample.catName}`,
         );
       });
     }

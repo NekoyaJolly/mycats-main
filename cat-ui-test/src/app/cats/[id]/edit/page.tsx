@@ -106,7 +106,10 @@ export default function CatEditPage() {
               <Button variant='outline' color='red' onClick={handleDelete}>
                 削除
               </Button>
-              <Button type='submit' leftSection={<IconDeviceFloppy size={16} />}>
+              <Button
+                type='submit'
+                leftSection={<IconDeviceFloppy size={16} />}
+              >
                 保存
               </Button>
             </Group>

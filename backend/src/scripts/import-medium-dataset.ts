@@ -31,11 +31,16 @@ interface PedigreeData {
 }
 
 async function importMediumDataset() {
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データRenamed.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データRenamed.csv',
+  );
   const targetCount = parseInt(process.argv[2]) || 500; // デフォルト500件
 
   try {
-    console.log(`🔄 中規模データインポートを開始... (目標: ${targetCount}件)\n`);
+    console.log(
+      `🔄 中規模データインポートを開始... (目標: ${targetCount}件)\n`,
+    );
 
     const startTime = Date.now();
     const records: PedigreeData[] = [];
@@ -48,7 +53,7 @@ async function importMediumDataset() {
             columns: true,
             skip_empty_lines: true,
             trim: true,
-          })
+          }),
         )
         .on('data', (record: any) => {
           if (processedCount < targetCount) {
@@ -101,7 +106,9 @@ async function importMediumDataset() {
         }
 
         // 日付変換
-        const birthDate = record.BirthDate ? new Date(record.BirthDate.replace(/\./g, '-')) : null;
+        const birthDate = record.BirthDate
+          ? new Date(record.BirthDate.replace(/\./g, '-'))
+          : null;
         const registrationDate = record.RegistrationDate
           ? new Date(record.RegistrationDate.replace(/\./g, '-'))
           : null;

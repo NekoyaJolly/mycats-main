@@ -10,19 +10,17 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <Container size="sm" py="xl">
-      <Stack align="center" gap="lg">
-        <Title order={1} size="h1">
+    <Container size='sm' py='xl'>
+      <Stack align='center' gap='lg'>
+        <Title order={1} size='h1'>
           エラーが発生しました
         </Title>
-        <Text c="dimmed" ta="center">
+        <Text c='dimmed' ta='center'>
           申し訳ありません。予期しないエラーが発生しました。
         </Text>
-        <Stack gap="sm">
-          <Button onClick={reset}>
-            再試行
-          </Button>
-          <Button component={Link} href="/" variant="outline">
+        <Stack gap='sm'>
+          <Button onClick={reset}>再試行</Button>
+          <Button component={Link} href='/' variant='outline'>
             ホームに戻る
           </Button>
         </Stack>

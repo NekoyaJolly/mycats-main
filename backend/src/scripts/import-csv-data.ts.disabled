@@ -57,7 +57,10 @@ async function importBreeds() {
   console.log('🐱 Importing breed data...');
 
   const breeds: BreedData[] = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/猫種データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/猫種データUTF8Ver.csv',
+  );
 
   return new Promise<void>((resolve, reject) => {
     fs.createReadStream(csvPath)
@@ -73,7 +76,11 @@ async function importBreeds() {
           for (const breed of breeds) {
             const code = parseInt(breed.key);
             const trimmedName = breed.name.trim();
-            if (!isNaN(code) && trimmedName && !processedNames.has(trimmedName)) {
+            if (
+              !isNaN(code) &&
+              trimmedName &&
+              !processedNames.has(trimmedName)
+            ) {
               processedNames.add(trimmedName);
               await prisma.breed.upsert({
                 where: { code },
@@ -99,7 +106,10 @@ async function importCoatColors() {
   console.log('🎨 Importing coat color data...');
 
   const colors: CoatColorData[] = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/色柄データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/色柄データUTF8Ver.csv',
+  );
 
   return new Promise<void>((resolve, reject) => {
     fs.createReadStream(csvPath)
@@ -115,7 +125,11 @@ async function importCoatColors() {
           for (const color of colors) {
             const code = parseInt(color.key);
             const trimmedName = color.name.trim();
-            if (!isNaN(code) && trimmedName && !processedColorNames.has(trimmedName)) {
+            if (
+              !isNaN(code) &&
+              trimmedName &&
+              !processedColorNames.has(trimmedName)
+            ) {
               processedColorNames.add(trimmedName);
               await prisma.coatColor.upsert({
                 where: { code },
@@ -141,7 +155,10 @@ async function importPedigrees() {
   console.log('📜 Importing pedigree data...');
 
   const pedigrees: PedigreeData[] = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データRenamed_original.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データRenamed_original.csv',
+  );
 
   // Define headers based on updated CSV structure (ChampionFlag columns removed)
   const headers = [
@@ -236,7 +253,11 @@ async function importPedigrees() {
       .pipe(csv({ headers }))
       .on('data', (data: PedigreeData) => {
         rowCount++;
-        if (rowCount > 1 && data.pedigreeId && data.pedigreeId !== 'PedigreeID') {
+        if (
+          rowCount > 1 &&
+          data.pedigreeId &&
+          data.pedigreeId !== 'PedigreeID'
+        ) {
           // Skip header row
           pedigrees.push(data);
         }
@@ -253,19 +274,29 @@ async function importPedigrees() {
             for (const pedigree of batch) {
               try {
                 // Parse dates
-                const birthDate = pedigree.birthDate ? parseDate(pedigree.birthDate) : null;
+                const birthDate = pedigree.birthDate
+                  ? parseDate(pedigree.birthDate)
+                  : null;
                 const registrationDate = pedigree.registrationDate
                   ? parseDate(pedigree.registrationDate)
                   : null;
 
                 // Parse numbers
-                const breedCode = pedigree.breedCode ? parseInt(pedigree.breedCode) : null;
+                const breedCode = pedigree.breedCode
+                  ? parseInt(pedigree.breedCode)
+                  : null;
                 const coatColorCode = pedigree.coatColorCode
                   ? parseInt(pedigree.coatColorCode)
                   : null;
-                const gender = pedigree.gender ? parseInt(pedigree.gender) : null;
-                const brotherCount = pedigree.brotherCount ? parseInt(pedigree.brotherCount) : null;
-                const sisterCount = pedigree.sisterCount ? parseInt(pedigree.sisterCount) : null;
+                const gender = pedigree.gender
+                  ? parseInt(pedigree.gender)
+                  : null;
+                const brotherCount = pedigree.brotherCount
+                  ? parseInt(pedigree.brotherCount)
+                  : null;
+                const sisterCount = pedigree.sisterCount
+                  ? parseInt(pedigree.sisterCount)
+                  : null;
 
                 await prisma.pedigree.upsert({
                   where: { pedigreeId: pedigree.pedigreeId.toString() },
@@ -308,12 +339,15 @@ async function importPedigrees() {
                   },
                 });
               } catch (error) {
-                console.warn(`Warning: Failed to import pedigree ${pedigree.pedigreeId}:`, error);
+                console.warn(
+                  `Warning: Failed to import pedigree ${pedigree.pedigreeId}:`,
+                  error,
+                );
               }
             }
 
             console.log(
-              `Processed batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(pedigrees.length / batchSize)}`
+              `Processed batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(pedigrees.length / batchSize)}`,
             );
           }
 
@@ -344,7 +378,14 @@ function parseDate(dateStr: string): Date | null {
       const month = parseInt(match[2]);
       const day = parseInt(match[3]);
 
-      if (year > 1900 && year < 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      if (
+        year > 1900 &&
+        year < 2100 &&
+        month >= 1 &&
+        month <= 12 &&
+        day >= 1 &&
+        day <= 31
+      ) {
         return new Date(year, month - 1, day);
       }
     }

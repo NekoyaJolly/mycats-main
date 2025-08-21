@@ -14,12 +14,22 @@ export const metadata: Metadata = {
 
 import Link from 'next/link';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang='ja'>
       <body className={inter.className}>
         <Providers>
-          <div style={{ minHeight: '100vh', position: 'relative', paddingBottom: 72 }}>
+          <div
+            style={{
+              minHeight: '100vh',
+              position: 'relative',
+              paddingBottom: 72,
+            }}
+          >
             {children}
             {/* 固定フッターナビゲーション */}
             <Box

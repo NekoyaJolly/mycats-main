@@ -9,7 +9,10 @@ async function importBreeds() {
   console.log('🐱 Importing breed data...');
 
   const breeds = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/猫種データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/猫種データUTF8Ver.csv',
+  );
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(csvPath)
@@ -44,7 +47,9 @@ async function importBreeds() {
           }
 
           const actualCount = await prisma.breed.count();
-          console.log(`✅ Imported ${actualCount} breeds (processed ${breeds.length} entries)`);
+          console.log(
+            `✅ Imported ${actualCount} breeds (processed ${breeds.length} entries)`,
+          );
           resolve();
         } catch (error) {
           reject(error);
@@ -58,7 +63,10 @@ async function importCoatColors() {
   console.log('🎨 Importing coat color data...');
 
   const colors = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/色柄データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/色柄データUTF8Ver.csv',
+  );
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(csvPath)
@@ -93,7 +101,7 @@ async function importCoatColors() {
 
           const actualCount = await prisma.coatColor.count();
           console.log(
-            `✅ Imported ${actualCount} coat colors (processed ${colors.length} entries)`
+            `✅ Imported ${actualCount} coat colors (processed ${colors.length} entries)`,
           );
           resolve();
         } catch (error) {
@@ -121,7 +129,14 @@ function parseDate(dateStr) {
       const month = parseInt(match[2]);
       const day = parseInt(match[3]);
 
-      if (year > 1900 && year < 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      if (
+        year > 1900 &&
+        year < 2100 &&
+        month >= 1 &&
+        month <= 12 &&
+        day >= 1 &&
+        day <= 31
+      ) {
         return new Date(year, month - 1, day);
       }
     }

@@ -105,9 +105,27 @@ const sampleTagCategories: TagCategory[] = [
     description: '猫の性格や行動特徴に関するタグ',
     color: '#e67e22',
     tags: [
-      { id: 't4', name: '人懐っこい', categoryId: '2', color: '#e67e22', usageCount: 15 },
-      { id: 't5', name: '内気', categoryId: '2', color: '#e67e22', usageCount: 7 },
-      { id: 't6', name: '活発', categoryId: '2', color: '#e67e22', usageCount: 10 },
+      {
+        id: 't4',
+        name: '人懐っこい',
+        categoryId: '2',
+        color: '#e67e22',
+        usageCount: 15,
+      },
+      {
+        id: 't5',
+        name: '内気',
+        categoryId: '2',
+        color: '#e67e22',
+        usageCount: 7,
+      },
+      {
+        id: 't6',
+        name: '活発',
+        categoryId: '2',
+        color: '#e67e22',
+        usageCount: 10,
+      },
     ],
   },
   {
@@ -116,18 +134,36 @@ const sampleTagCategories: TagCategory[] = [
     description: '健康や医療に関するタグ',
     color: '#e74c3c',
     tags: [
-      { id: 't7', name: '要注意', categoryId: '3', color: '#e74c3c', usageCount: 3 },
-      { id: 't8', name: '健康', categoryId: '3', color: '#2ecc71', usageCount: 20 },
+      {
+        id: 't7',
+        name: '要注意',
+        categoryId: '3',
+        color: '#e74c3c',
+        usageCount: 3,
+      },
+      {
+        id: 't8',
+        name: '健康',
+        categoryId: '3',
+        color: '#2ecc71',
+        usageCount: 20,
+      },
     ],
   },
 ];
 
 export default function TagsPage() {
-  const [tagCategories, setTagCategories] = useState<TagCategory[]>(sampleTagCategories);
-  const [categoryModalOpened, { open: openCategoryModal, close: closeCategoryModal }] =
+  const [tagCategories, setTagCategories] =
+    useState<TagCategory[]>(sampleTagCategories);
+  const [
+    categoryModalOpened,
+    { open: openCategoryModal, close: closeCategoryModal },
+  ] = useDisclosure(false);
+  const [tagModalOpened, { open: openTagModal, close: closeTagModal }] =
     useDisclosure(false);
-  const [tagModalOpened, { open: openTagModal, close: closeTagModal }] = useDisclosure(false);
-  const [editingCategory, setEditingCategory] = useState<TagCategory | null>(null);
+  const [editingCategory, setEditingCategory] = useState<TagCategory | null>(
+    null,
+  );
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
 
@@ -153,7 +189,9 @@ export default function TagsPage() {
     if (editingCategory) {
       // 編集
       setTagCategories(prev =>
-        prev.map(cat => (cat.id === editingCategory.id ? { ...cat, ...categoryForm } : cat))
+        prev.map(cat =>
+          cat.id === editingCategory.id ? { ...cat, ...categoryForm } : cat,
+        ),
       );
     } else {
       // 新規作成
@@ -180,9 +218,11 @@ export default function TagsPage() {
         prev.map(category => ({
           ...category,
           tags: category.tags.map(tag =>
-            tag.id === editingTag.id ? { ...tag, ...tagForm, usageCount: tag.usageCount } : tag
+            tag.id === editingTag.id
+              ? { ...tag, ...tagForm, usageCount: tag.usageCount }
+              : tag,
           ),
-        }))
+        })),
       );
     } else {
       // 新規作成
@@ -195,12 +235,17 @@ export default function TagsPage() {
         prev.map(category =>
           category.id === tagForm.categoryId
             ? { ...category, tags: [...category.tags, newTag] }
-            : category
-        )
+            : category,
+        ),
       );
     }
 
-    setTagForm({ name: '', categoryId: '', color: PRESET_COLORS[0], description: '' });
+    setTagForm({
+      name: '',
+      categoryId: '',
+      color: PRESET_COLORS[0],
+      description: '',
+    });
     setEditingTag(null);
     closeTagModal();
   };
@@ -242,7 +287,7 @@ export default function TagsPage() {
         prev.map(category => ({
           ...category,
           tags: category.tags.filter(tag => tag.id !== tagId),
-        }))
+        })),
       );
     }
   };
@@ -277,7 +322,11 @@ export default function TagsPage() {
           <Button
             leftSection={<IconPlus size={16} />}
             onClick={() => {
-              setCategoryForm({ name: '', description: '', color: PRESET_COLORS[0] });
+              setCategoryForm({
+                name: '',
+                description: '',
+                color: PRESET_COLORS[0],
+              });
               setEditingCategory(null);
               openCategoryModal();
             }}
@@ -286,7 +335,11 @@ export default function TagsPage() {
           >
             カテゴリ追加
           </Button>
-          <Button leftSection={<IconTag size={16} />} onClick={() => openNewTagModal()} size='sm'>
+          <Button
+            leftSection={<IconTag size={16} />}
+            onClick={() => openNewTagModal()}
+            size='sm'
+          >
             タグ追加
           </Button>
         </Group>
@@ -312,7 +365,13 @@ export default function TagsPage() {
         <Tabs.Panel value='categories' pt='md'>
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
             {tagCategories.map(category => (
-              <Card key={category.id} shadow='sm' padding='md' radius='md' withBorder>
+              <Card
+                key={category.id}
+                shadow='sm'
+                padding='md'
+                radius='md'
+                withBorder
+              >
                 <Stack gap='sm'>
                   <Group justify='space-between' wrap='nowrap'>
                     <Group gap='xs'>
@@ -375,7 +434,10 @@ export default function TagsPage() {
                           key={tag.id}
                           size='xs'
                           variant='light'
-                          style={{ backgroundColor: `${tag.color}15`, color: tag.color }}
+                          style={{
+                            backgroundColor: `${tag.color}15`,
+                            color: tag.color,
+                          }}
                         >
                           {tag.name}
                         </Badge>
@@ -397,7 +459,13 @@ export default function TagsPage() {
         <Tabs.Panel value='tags' pt='md'>
           <Stack gap='md'>
             {tagCategories.map(category => (
-              <Card key={category.id} shadow='sm' padding='md' radius='md' withBorder>
+              <Card
+                key={category.id}
+                shadow='sm'
+                padding='md'
+                radius='md'
+                withBorder
+              >
                 <Stack gap='sm'>
                   <Group justify='space-between'>
                     <Group gap='xs'>
@@ -414,11 +482,20 @@ export default function TagsPage() {
                   <Grid>
                     {category.tags.map(tag => (
                       <Grid.Col key={tag.id} span={4}>
-                        <Card padding='xs' radius='sm' withBorder bg={`${tag.color}08`}>
+                        <Card
+                          padding='xs'
+                          radius='sm'
+                          withBorder
+                          bg={`${tag.color}08`}
+                        >
                           <Group justify='space-between' wrap='nowrap'>
-                            <Stack gap="xs">
+                            <Stack gap='xs'>
                               <Group gap='xs'>
-                                <Text size='sm' fw={500} style={{ color: tag.color }}>
+                                <Text
+                                  size='sm'
+                                  fw={500}
+                                  style={{ color: tag.color }}
+                                >
                                   {tag.name}
                                 </Text>
                                 <Badge size='xs' variant='outline'>
@@ -478,14 +555,21 @@ export default function TagsPage() {
             label='カテゴリ名'
             placeholder='例：体型・サイズ'
             value={categoryForm.name}
-            onChange={e => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
+            onChange={e =>
+              setCategoryForm(prev => ({ ...prev, name: e.target.value }))
+            }
           />
 
           <TextInput
             label='説明'
             placeholder='例：猫の体型や大きさに関するタグ'
             value={categoryForm.description}
-            onChange={e => setCategoryForm(prev => ({ ...prev, description: e.target.value }))}
+            onChange={e =>
+              setCategoryForm(prev => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
           />
 
           <Box>
@@ -500,7 +584,8 @@ export default function TagsPage() {
                   size={32}
                   style={{
                     cursor: 'pointer',
-                    border: categoryForm.color === color ? '2px solid #000' : 'none',
+                    border:
+                      categoryForm.color === color ? '2px solid #000' : 'none',
                   }}
                   onClick={() => setCategoryForm(prev => ({ ...prev, color }))}
                 />
@@ -512,7 +597,10 @@ export default function TagsPage() {
             <Button variant='outline' onClick={closeCategoryModal}>
               キャンセル
             </Button>
-            <Button onClick={handleSaveCategory} disabled={!categoryForm.name.trim()}>
+            <Button
+              onClick={handleSaveCategory}
+              disabled={!categoryForm.name.trim()}
+            >
               {editingCategory ? '更新' : '作成'}
             </Button>
           </Group>
@@ -531,22 +619,31 @@ export default function TagsPage() {
             label='カテゴリ'
             placeholder='カテゴリを選択'
             value={tagForm.categoryId}
-            onChange={value => setTagForm(prev => ({ ...prev, categoryId: value || '' }))}
-            data={tagCategories.map(cat => ({ value: cat.id, label: cat.name }))}
+            onChange={value =>
+              setTagForm(prev => ({ ...prev, categoryId: value || '' }))
+            }
+            data={tagCategories.map(cat => ({
+              value: cat.id,
+              label: cat.name,
+            }))}
           />
 
           <TextInput
             label='タグ名'
             placeholder='例：大型'
             value={tagForm.name}
-            onChange={e => setTagForm(prev => ({ ...prev, name: e.target.value }))}
+            onChange={e =>
+              setTagForm(prev => ({ ...prev, name: e.target.value }))
+            }
           />
 
           <TextInput
             label='説明（任意）'
             placeholder='例：体重5kg以上'
             value={tagForm.description}
-            onChange={e => setTagForm(prev => ({ ...prev, description: e.target.value }))}
+            onChange={e =>
+              setTagForm(prev => ({ ...prev, description: e.target.value }))
+            }
           />
 
           <Box>
@@ -573,7 +670,10 @@ export default function TagsPage() {
             <Button variant='outline' onClick={closeTagModal}>
               キャンセル
             </Button>
-            <Button onClick={handleSaveTag} disabled={!tagForm.name.trim() || !tagForm.categoryId}>
+            <Button
+              onClick={handleSaveTag}
+              disabled={!tagForm.name.trim() || !tagForm.categoryId}
+            >
               {editingTag ? '更新' : '作成'}
             </Button>
           </Group>

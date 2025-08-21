@@ -68,7 +68,7 @@ export default function FamilyTreePage() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:3004/api/v1/pedigrees/${pedigreeId}/family-tree?generations=${generations}`
+          `http://localhost:3004/api/v1/pedigrees/${pedigreeId}/family-tree?generations=${generations}`,
         );
 
         if (!response.ok) {
@@ -78,7 +78,9 @@ export default function FamilyTreePage() {
         const data = await response.json();
         setFamilyTree(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : '不明なエラーが発生しました');
+        setError(
+          err instanceof Error ? err.message : '不明なエラーが発生しました',
+        );
       } finally {
         setLoading(false);
       }
@@ -144,7 +146,11 @@ export default function FamilyTreePage() {
     }
 
     const borderColor =
-      position === 'father' ? '#228be6' : position === 'mother' ? '#e64980' : '#868e96';
+      position === 'father'
+        ? '#228be6'
+        : position === 'mother'
+          ? '#e64980'
+          : '#868e96';
 
     return (
       <Card
@@ -191,7 +197,7 @@ export default function FamilyTreePage() {
   const renderFamilyLevel = (
     pedigree: FamilyTreeData | null,
     currentLevel: number,
-    maxLevel: number
+    maxLevel: number,
   ): React.ReactNode => {
     if (!pedigree || currentLevel > maxLevel) {
       return null;
@@ -249,14 +255,29 @@ export default function FamilyTreePage() {
         </Grid>
 
         {/* 祖父母以上の世代を再帰的に表示 */}
-        {currentLevel < maxLevel - 1 && (pedigree.father || pedigree.mother) && (
-          <div style={{ marginLeft: '20px', paddingLeft: '20px', borderLeft: '2px solid #dee2e6' }}>
-            {pedigree.father &&
-              renderFamilyLevel(pedigree.father as FamilyTreeData, currentLevel + 1, maxLevel)}
-            {pedigree.mother &&
-              renderFamilyLevel(pedigree.mother as FamilyTreeData, currentLevel + 1, maxLevel)}
-          </div>
-        )}
+        {currentLevel < maxLevel - 1 &&
+          (pedigree.father || pedigree.mother) && (
+            <div
+              style={{
+                marginLeft: '20px',
+                paddingLeft: '20px',
+                borderLeft: '2px solid #dee2e6',
+              }}
+            >
+              {pedigree.father &&
+                renderFamilyLevel(
+                  pedigree.father as FamilyTreeData,
+                  currentLevel + 1,
+                  maxLevel,
+                )}
+              {pedigree.mother &&
+                renderFamilyLevel(
+                  pedigree.mother as FamilyTreeData,
+                  currentLevel + 1,
+                  maxLevel,
+                )}
+            </div>
+          )}
       </div>
     );
   };
@@ -264,8 +285,15 @@ export default function FamilyTreePage() {
   if (loading) {
     return (
       <Container component='div' size='xl' py='md'>
-        <Paper component='div' p='md' style={{ position: 'relative', minHeight: '400px' }}>
-          <LoadingOverlay visible={true} overlayProps={{ radius: 'sm', blur: 2 }} />
+        <Paper
+          component='div'
+          p='md'
+          style={{ position: 'relative', minHeight: '400px' }}
+        >
+          <LoadingOverlay
+            visible={true}
+            overlayProps={{ radius: 'sm', blur: 2 }}
+          />
         </Paper>
       </Container>
     );
@@ -289,7 +317,11 @@ export default function FamilyTreePage() {
       <Stack gap='md'>
         {/* ヘッダー */}
         <Group justify='space-between'>
-          <Button component='button' variant='light' onClick={() => router.back()}>
+          <Button
+            component='button'
+            variant='light'
+            onClick={() => router.back()}
+          >
             血統書詳細に戻る
           </Button>
           <Group>
@@ -332,7 +364,8 @@ export default function FamilyTreePage() {
         {/* 説明 */}
         <Paper component='div' p='md' style={{ backgroundColor: '#f8f9fa' }}>
           <Text size='sm' c='dimmed'>
-            <strong>使い方:</strong> 各カードをクリックすると、その個体の詳細情報に移動できます。
+            <strong>使い方:</strong>{' '}
+            各カードをクリックすると、その個体の詳細情報に移動できます。
             世代数を変更することで、表示する祖先の数を調整できます。
           </Text>
         </Paper>

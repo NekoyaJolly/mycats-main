@@ -1,4 +1,12 @@
-import { IsOptional, IsString, IsInt, IsEnum, IsIn, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsInt,
+  IsEnum,
+  IsIn,
+  Min,
+  Max,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CatGender } from './create-cat.dto';

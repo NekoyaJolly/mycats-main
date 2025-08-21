@@ -35,14 +35,14 @@ interface PedigreeData {
   pedigreeId: string;
   catName: string;
   breedCode: number | null;
-  gender: number | null;
+  genderCode: number | null;
   birthDate: string | null;
   breederName: string | null;
   ownerName: string | null;
   registrationDate: string | null;
   notes: string | null;
-  fatherPedigree?: { pedigreeId: string; catName: string } | null;
-  motherPedigree?: { pedigreeId: string; catName: string } | null;
+  fatherCatName?: string | null;
+  motherCatName?: string | null;
 }
 
 interface PedigreeResponse {
@@ -83,10 +83,12 @@ export default function PedigreesPage() {
         params.append('search', searchTerm);
       }
       if (genderFilter) {
-        params.append('gender', genderFilter);
+        params.append('genderCode', genderFilter);
       }
 
-      const response = await fetch(`http://localhost:3004/api/v1/pedigrees?${params}`);
+      const response = await fetch(
+        `http://localhost:3004/api/v1/pedigrees?${params}`,
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch pedigrees');
       }
@@ -105,7 +107,7 @@ export default function PedigreesPage() {
 
   useEffect(() => {
     fetchPedigrees(1);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -125,8 +127,8 @@ export default function PedigreesPage() {
     });
   };
 
-  const formatGender = (gender: number | null) => {
-    switch (gender) {
+  const formatGender = (genderCode: number | null) => {
+    switch (genderCode) {
       case 1:
         return '雄';
       case 2:
@@ -136,8 +138,8 @@ export default function PedigreesPage() {
     }
   };
 
-  const getGenderColor = (gender: number | null) => {
-    switch (gender) {
+  const getGenderColor = (genderCode: number | null) => {
+    switch (genderCode) {
       case 1:
         return 'blue';
       case 2:
@@ -190,10 +192,17 @@ export default function PedigreesPage() {
             </Grid.Col>
             <Grid.Col span={3}>
               <Group>
-                <Button onClick={handleSearch} leftSection={<IconSearch size={16} />}>
+                <Button
+                  onClick={handleSearch}
+                  leftSection={<IconSearch size={16} />}
+                >
                   検索
                 </Button>
-                <ActionIcon variant='light' onClick={() => fetchPedigrees(currentPage)} size='lg'>
+                <ActionIcon
+                  variant='light'
+                  onClick={() => fetchPedigrees(currentPage)}
+                  size='lg'
+                >
                   <IconRefresh size={16} />
                 </ActionIcon>
               </Group>
@@ -203,7 +212,10 @@ export default function PedigreesPage() {
 
         {/* 血統書リストテーブル */}
         <Paper shadow='sm' style={{ position: 'relative' }}>
-          <LoadingOverlay visible={loading} overlayProps={{ radius: 'sm', blur: 2 }} />
+          <LoadingOverlay
+            visible={loading}
+            overlayProps={{ radius: 'sm', blur: 2 }}
+          />
 
           <Table striped highlightOnHover>
             <Table.Thead>
@@ -231,8 +243,8 @@ export default function PedigreesPage() {
                     <Text fw={500}>{pedigree.catName || '名前なし'}</Text>
                   </Table.Td>
                   <Table.Td>
-                    <Badge color={getGenderColor(pedigree.gender)} size='sm'>
-                      {formatGender(pedigree.gender)}
+                    <Badge color={getGenderColor(pedigree.genderCode)} size='sm'>
+                      {formatGender(pedigree.genderCode)}
                     </Badge>
                   </Table.Td>
                   <Table.Td>
@@ -248,16 +260,12 @@ export default function PedigreesPage() {
                   </Table.Td>
                   <Table.Td>
                     <Text size='sm' c='blue'>
-                      {pedigree.fatherPedigree
-                        ? `${pedigree.fatherPedigree.pedigreeId} (${pedigree.fatherPedigree.catName})`
-                        : '-'}
+                      {pedigree.fatherCatName || '-'}
                     </Text>
                   </Table.Td>
                   <Table.Td>
                     <Text size='sm' c='pink'>
-                      {pedigree.motherPedigree
-                        ? `${pedigree.motherPedigree.pedigreeId} (${pedigree.motherPedigree.catName})`
-                        : '-'}
+                      {pedigree.motherCatName || '-'}
                     </Text>
                   </Table.Td>
                   <Table.Td>
@@ -266,7 +274,9 @@ export default function PedigreesPage() {
                         <ActionIcon
                           variant='light'
                           color='blue'
-                          onClick={() => router.push(`/pedigrees/${pedigree.id}`)}
+                          onClick={() =>
+                            router.push(`/pedigrees/${pedigree.id}`)
+                          }
                         >
                           <IconEye size={16} />
                         </ActionIcon>
@@ -275,7 +285,9 @@ export default function PedigreesPage() {
                         <ActionIcon
                           variant='light'
                           color='green'
-                          onClick={() => router.push(`/pedigrees/${pedigree.id}/family-tree`)}
+                          onClick={() =>
+                            router.push(`/pedigrees/${pedigree.id}/family-tree`)
+                          }
                         >
                           <IconFileText size={16} />
                         </ActionIcon>

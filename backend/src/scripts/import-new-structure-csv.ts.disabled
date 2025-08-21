@@ -115,7 +115,7 @@ async function importNewStructureCsvData(
     skipCoatColors?: boolean;
     skipPedigrees?: boolean;
     batchSize?: number;
-  }
+  },
 ) {
   const {
     skipBreeds = false,
@@ -155,7 +155,10 @@ async function importBreeds() {
   console.log('🐱 猫種データをインポート中...');
 
   const breeds: BreedData[] = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/猫種データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/猫種データUTF8Ver.csv',
+  );
 
   return new Promise<void>((resolve, reject) => {
     fs.createReadStream(csvPath)
@@ -171,7 +174,11 @@ async function importBreeds() {
           for (const breed of breeds) {
             const code = parseInt(breed.key);
             const trimmedName = breed.name.trim();
-            if (!isNaN(code) && trimmedName && !processedBreedNames.has(trimmedName)) {
+            if (
+              !isNaN(code) &&
+              trimmedName &&
+              !processedBreedNames.has(trimmedName)
+            ) {
               processedBreedNames.add(trimmedName);
               await prisma.breed.upsert({
                 where: { code },
@@ -197,7 +204,10 @@ async function importCoatColors() {
   console.log('🎨 毛色データをインポート中...');
 
   const colors: CoatColorData[] = [];
-  const csvPath = path.join(__dirname, '../../NewPedigree/色柄データUTF8Ver.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/色柄データUTF8Ver.csv',
+  );
 
   return new Promise<void>((resolve, reject) => {
     fs.createReadStream(csvPath)
@@ -213,7 +223,11 @@ async function importCoatColors() {
           for (const color of colors) {
             const code = parseInt(color.key);
             const trimmedName = color.name.trim();
-            if (!isNaN(code) && trimmedName && !processedColorNames.has(trimmedName)) {
+            if (
+              !isNaN(code) &&
+              trimmedName &&
+              !processedColorNames.has(trimmedName)
+            ) {
               processedColorNames.add(trimmedName);
               await prisma.coatColor.upsert({
                 where: { code },
@@ -235,7 +249,10 @@ async function importCoatColors() {
   });
 }
 
-async function importNewStructurePedigrees(csvFileName?: string, batchSize: number = 100) {
+async function importNewStructurePedigrees(
+  csvFileName?: string,
+  batchSize: number = 100,
+) {
   console.log('📜 新しい構造での血統書データをインポート中...');
 
   const defaultFileName = '血統書データRenamed_converted.csv';
@@ -334,7 +351,11 @@ async function importNewStructurePedigrees(csvFileName?: string, batchSize: numb
       .pipe(csv({ headers }))
       .on('data', (data: NewPedigreeData) => {
         rowCount++;
-        if (rowCount > 1 && data.pedigreeId && data.pedigreeId !== 'PedigreeID') {
+        if (
+          rowCount > 1 &&
+          data.pedigreeId &&
+          data.pedigreeId !== 'PedigreeID'
+        ) {
           pedigrees.push(data);
         }
       })
@@ -346,25 +367,35 @@ async function importNewStructurePedigrees(csvFileName?: string, batchSize: numb
           for (let i = 0; i < pedigrees.length; i += batchSize) {
             const batch = pedigrees.slice(i, i + batchSize);
             console.log(
-              `📦 バッチ ${Math.floor(i / batchSize) + 1}/${Math.ceil(pedigrees.length / batchSize)} (${batch.length}件) を処理中...`
+              `📦 バッチ ${Math.floor(i / batchSize) + 1}/${Math.ceil(pedigrees.length / batchSize)} (${batch.length}件) を処理中...`,
             );
 
             for (const pedigree of batch) {
               try {
                 // 日付の解析
-                const birthDate = pedigree.birthDate ? parseDate(pedigree.birthDate) : null;
+                const birthDate = pedigree.birthDate
+                  ? parseDate(pedigree.birthDate)
+                  : null;
                 const registrationDate = pedigree.registrationDate
                   ? parseDate(pedigree.registrationDate)
                   : null;
 
                 // 数値の解析
-                const breedCode = pedigree.breedCode ? parseInt(pedigree.breedCode) : null;
+                const breedCode = pedigree.breedCode
+                  ? parseInt(pedigree.breedCode)
+                  : null;
                 const coatColorCode = pedigree.coatColorCode
                   ? parseInt(pedigree.coatColorCode)
                   : null;
-                const gender = pedigree.gender ? parseInt(pedigree.gender) : null;
-                const brotherCount = pedigree.brotherCount ? parseInt(pedigree.brotherCount) : null;
-                const sisterCount = pedigree.sisterCount ? parseInt(pedigree.sisterCount) : null;
+                const gender = pedigree.gender
+                  ? parseInt(pedigree.gender)
+                  : null;
+                const brotherCount = pedigree.brotherCount
+                  ? parseInt(pedigree.brotherCount)
+                  : null;
+                const sisterCount = pedigree.sisterCount
+                  ? parseInt(pedigree.sisterCount)
+                  : null;
 
                 await prisma.pedigree.upsert({
                   where: { pedigreeId: pedigree.pedigreeId.toString() },
@@ -539,12 +570,17 @@ async function importNewStructurePedigrees(csvFileName?: string, batchSize: numb
                   },
                 });
               } catch (pedigreeError) {
-                console.warn(`⚠️ 血統書 ${pedigree.pedigreeId} の処理中にエラー:`, pedigreeError);
+                console.warn(
+                  `⚠️ 血統書 ${pedigree.pedigreeId} の処理中にエラー:`,
+                  pedigreeError,
+                );
               }
             }
           }
 
-          console.log(`✅ ${pedigrees.length}件の血統書データをインポートしました`);
+          console.log(
+            `✅ ${pedigrees.length}件の血統書データをインポートしました`,
+          );
           resolve();
         } catch (error) {
           reject(error);

@@ -30,10 +30,10 @@ export class PedigreeQueryDto {
   @IsString()
   colorId?: string;
 
-  @ApiPropertyOptional({ description: '性別 (1: オス, 2: メス)' })
+  @ApiPropertyOptional({ description: '性別コード (1: オス, 2: メス)' })
   @IsOptional()
   @IsString()
-  gender?: string;
+  genderCode?: string; // 設計書に合わせて gender → genderCode
 
   @ApiPropertyOptional({ description: 'キャッテリー名' })
   @IsOptional()

@@ -50,9 +50,27 @@ const defaultCategories: TagCategory[] = [
     description: '猫の体型や大きさに関するタグ',
     color: '#3498db',
     tags: [
-      { id: 't1', name: '大型', categoryId: '1', color: '#3498db', usageCount: 12 },
-      { id: 't2', name: '中型', categoryId: '1', color: '#3498db', usageCount: 8 },
-      { id: 't3', name: '小型', categoryId: '1', color: '#3498db', usageCount: 5 },
+      {
+        id: 't1',
+        name: '大型',
+        categoryId: '1',
+        color: '#3498db',
+        usageCount: 12,
+      },
+      {
+        id: 't2',
+        name: '中型',
+        categoryId: '1',
+        color: '#3498db',
+        usageCount: 8,
+      },
+      {
+        id: 't3',
+        name: '小型',
+        categoryId: '1',
+        color: '#3498db',
+        usageCount: 5,
+      },
     ],
   },
   {
@@ -61,9 +79,27 @@ const defaultCategories: TagCategory[] = [
     description: '猫の性格や行動特徴に関するタグ',
     color: '#e67e22',
     tags: [
-      { id: 't4', name: '人懐っこい', categoryId: '2', color: '#e67e22', usageCount: 15 },
-      { id: 't5', name: '内気', categoryId: '2', color: '#e67e22', usageCount: 7 },
-      { id: 't6', name: '活発', categoryId: '2', color: '#e67e22', usageCount: 10 },
+      {
+        id: 't4',
+        name: '人懐っこい',
+        categoryId: '2',
+        color: '#e67e22',
+        usageCount: 15,
+      },
+      {
+        id: 't5',
+        name: '内気',
+        categoryId: '2',
+        color: '#e67e22',
+        usageCount: 7,
+      },
+      {
+        id: 't6',
+        name: '活発',
+        categoryId: '2',
+        color: '#e67e22',
+        usageCount: 10,
+      },
     ],
   },
   {
@@ -72,8 +108,20 @@ const defaultCategories: TagCategory[] = [
     description: '健康や医療に関するタグ',
     color: '#e74c3c',
     tags: [
-      { id: 't7', name: '要注意', categoryId: '3', color: '#e74c3c', usageCount: 3 },
-      { id: 't8', name: '健康', categoryId: '3', color: '#2ecc71', usageCount: 20 },
+      {
+        id: 't7',
+        name: '要注意',
+        categoryId: '3',
+        color: '#e74c3c',
+        usageCount: 3,
+      },
+      {
+        id: 't8',
+        name: '健康',
+        categoryId: '3',
+        color: '#2ecc71',
+        usageCount: 20,
+      },
     ],
   },
 ];
@@ -116,7 +164,12 @@ export default function TagSelector({
           <Card key={category.id} padding='md' withBorder>
             <Stack gap='sm'>
               <Group gap='xs'>
-                <Box w={12} h={12} bg={category.color} style={{ borderRadius: 2 }} />
+                <Box
+                  w={12}
+                  h={12}
+                  bg={category.color}
+                  style={{ borderRadius: 2 }}
+                />
                 <Text fw={500} c={category.color}>
                   {category.name}
                 </Text>
@@ -132,7 +185,9 @@ export default function TagSelector({
                       variant={isSelected ? 'filled' : 'light'}
                       style={{
                         cursor: 'pointer',
-                        backgroundColor: isSelected ? tag.color : `${tag.color}15`,
+                        backgroundColor: isSelected
+                          ? tag.color
+                          : `${tag.color}15`,
                         color: isSelected ? '#fff' : tag.color,
                       }}
                       onClick={() => {
@@ -165,7 +220,12 @@ export default function TagSelector({
         <Text size='sm' fw={500}>
           {label}
         </Text>
-        <Button size='xs' variant='light' leftSection={<IconPlus size={12} />} onClick={open}>
+        <Button
+          size='xs'
+          variant='light'
+          leftSection={<IconPlus size={12} />}
+          onClick={open}
+        >
           カテゴリ別選択
         </Button>
       </Group>
@@ -181,7 +241,12 @@ export default function TagSelector({
           const tag = allTags.find(t => t.id === option.value);
           return (
             <Group gap='xs'>
-              <Box w={8} h={8} bg={tag?.color || '#gray'} style={{ borderRadius: '50%' }} />
+              <Box
+                w={8}
+                h={8}
+                bg={tag?.color || '#gray'}
+                style={{ borderRadius: '50%' }}
+              />
               <Text>{option.label}</Text>
             </Group>
           );
@@ -225,7 +290,9 @@ export function TagDisplay({
   size = 'sm',
 }: TagDisplayProps) {
   const allTags = categories.flatMap(category => category.tags);
-  const tags = tagIds.map(tagId => allTags.find(tag => tag.id === tagId)).filter(Boolean) as Tag[];
+  const tags = tagIds
+    .map(tagId => allTags.find(tag => tag.id === tagId))
+    .filter(Boolean) as Tag[];
 
   if (tags.length === 0) return null;
 

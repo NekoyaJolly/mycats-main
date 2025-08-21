@@ -83,7 +83,8 @@ export default function Home() {
     const today = new Date();
     const birth = new Date(birthDate);
     const ageInMonths =
-      (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
+      (today.getFullYear() - birth.getFullYear()) * 12 +
+      (today.getMonth() - birth.getMonth());
 
     if (ageInMonths < 12) {
       return `${ageInMonths}ヶ月`;
@@ -121,7 +122,9 @@ export default function Home() {
         });
         break;
       case 'raising':
-        filtered = cats.filter(cat => cat.tags.includes('繁殖用') || cat.tags.includes('妊娠中'));
+        filtered = cats.filter(
+          cat => cat.tags.includes('繁殖用') || cat.tags.includes('妊娠中'),
+        );
         break;
       default:
         filtered = cats;
@@ -133,7 +136,7 @@ export default function Home() {
         cat =>
           cat.name.includes(searchTerm) ||
           cat.color.includes(searchTerm) ||
-          cat.breed.includes(searchTerm)
+          cat.breed.includes(searchTerm),
       );
     }
 
@@ -143,7 +146,9 @@ export default function Home() {
         case 'name':
           return a.name.localeCompare(b.name);
         case 'age':
-          return new Date(b.birthDate).getTime() - new Date(a.birthDate).getTime(); // 新しい順
+          return (
+            new Date(b.birthDate).getTime() - new Date(a.birthDate).getTime()
+          ); // 新しい順
         case 'breed':
           return a.breed.localeCompare(b.breed);
         case 'gender':
@@ -162,7 +167,11 @@ export default function Home() {
     <Box style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       {/* ヘッダー */}
       <Box
-        style={{ backgroundColor: 'white', borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+        style={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid #e9ecef',
+          padding: '1rem 0',
+        }}
       >
         <Container size='xl'>
           <Title order={1} c='blue.6'>
@@ -176,7 +185,10 @@ export default function Home() {
         {/* タイトルと新規登録ボタン */}
         <Flex justify='space-between' align='center' mb='md'>
           <Title order={2}>在舎猫一覧</Title>
-          <Button leftSection={<IconPlus size={16} />} onClick={() => router.push('/cats/new')}>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => router.push('/cats/new')}
+          >
             新規登録
           </Button>
         </Flex>
@@ -205,10 +217,16 @@ export default function Home() {
         </Group>
 
         {/* タブ */}
-        <Tabs value={activeTab} onChange={value => setActiveTab(value || 'cats')} mb='md'>
+        <Tabs
+          value={activeTab}
+          onChange={value => setActiveTab(value || 'cats')}
+          mb='md'
+        >
           <Tabs.List>
             <Tabs.Tab value='cats'>Cats ({cats.length})</Tabs.Tab>
-            <Tabs.Tab value='male'>Male ({cats.filter(c => c.gender === 'オス').length})</Tabs.Tab>
+            <Tabs.Tab value='male'>
+              Male ({cats.filter(c => c.gender === 'オス').length})
+            </Tabs.Tab>
             <Tabs.Tab value='female'>
               Female ({cats.filter(c => c.gender === 'メス').length})
             </Tabs.Tab>
@@ -224,7 +242,10 @@ export default function Home() {
               <Flex justify='space-between' align='center'>
                 <Group gap='md' style={{ flex: 1 }}>
                   <Text fw={600}>{cat.name}</Text>
-                  <Badge color={cat.gender === 'オス' ? 'blue' : 'pink'} size='sm'>
+                  <Badge
+                    color={cat.gender === 'オス' ? 'blue' : 'pink'}
+                    size='sm'
+                  >
                     {cat.gender}
                   </Badge>
                   <Text size='sm'>{cat.breed}</Text>
@@ -232,7 +253,11 @@ export default function Home() {
                     {calculateAge(cat.birthDate)}
                   </Text>
                 </Group>
-                <Button variant='light' size='sm' onClick={() => handleViewDetails(cat.id)}>
+                <Button
+                  variant='light'
+                  size='sm'
+                  onClick={() => handleViewDetails(cat.id)}
+                >
                   詳細
                 </Button>
               </Flex>

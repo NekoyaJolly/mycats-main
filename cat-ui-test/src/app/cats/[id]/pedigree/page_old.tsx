@@ -1,7 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Box, Flex, Heading, Button, Stack, Text, Card } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Heading,
+  Button,
+  Stack,
+  Text,
+  Card,
+} from '@chakra-ui/react';
 
 // 仮の血統データ
 const pedigree = {
@@ -28,34 +36,53 @@ export default function PedigreePage() {
           <Heading size='lg' color='brand.500'>
             血統書
           </Heading>
-          <Button colorScheme='brand' onClick={() => router.push(`/cats/${pedigree.id}`)}>
+          <Button
+            colorScheme='brand'
+            onClick={() => router.push(`/cats/${pedigree.id}`)}
+          >
             詳細へ戻る
           </Button>
         </Flex>
       </Box>
-      <Box maxW='3xl' mx='auto' mt='8' p='6' bg='white' borderRadius='md' boxShadow='md'>
+      <Box
+        maxW='3xl'
+        mx='auto'
+        mt='8'
+        p='6'
+        bg='white'
+        borderRadius='md'
+        boxShadow='md'
+      >
         <Heading size='md' mb='4'>
           {pedigree.name} の血統図
         </Heading>
-        <Stack gap="md" align='center'>
+        <Stack gap='md' align='center'>
           {/* 本猫 */}
-          <Card.Root style={{ padding: 16, minWidth: 200, textAlign: 'center' }}>
+          <Card.Root
+            style={{ padding: 16, minWidth: 200, textAlign: 'center' }}
+          >
             <Text fontWeight='bold'>{pedigree.name}</Text>
             <Text fontSize='sm'>本人</Text>
           </Card.Root>
           {/* 両親 */}
-          <Flex gap="md" justify='center'>
+          <Flex gap='md' justify='center'>
             {pedigree.parents.map(p => (
-              <Card.Root key={p.id} style={{ padding: 16, minWidth: 160, textAlign: 'center' }}>
+              <Card.Root
+                key={p.id}
+                style={{ padding: 16, minWidth: 160, textAlign: 'center' }}
+              >
                 <Text fontWeight='bold'>{p.name}</Text>
                 <Text fontSize='sm'>{p.gender}</Text>
               </Card.Root>
             ))}
           </Flex>
           {/* 祖父母 */}
-          <Flex gap="md" justify='center'>
+          <Flex gap='md' justify='center'>
             {pedigree.grandparents.map(gp => (
-              <Card.Root key={gp.id} style={{ padding: 16, minWidth: 120, textAlign: 'center' }}>
+              <Card.Root
+                key={gp.id}
+                style={{ padding: 16, minWidth: 120, textAlign: 'center' }}
+              >
                 <Text fontWeight='bold'>{gp.name}</Text>
                 <Text fontSize='sm'>{gp.gender}</Text>
               </Card.Root>
@@ -83,8 +110,18 @@ const mockPedigree = {
       gender: '♂',
       breed: 'アメリカンショートヘア',
       color: 'シルバー',
-      father: { name: 'A1', gender: '♂', breed: 'アメショ', color: 'シルバー' },
-      mother: { name: 'A2', gender: '♀', breed: 'アメショ', color: 'ホワイト' },
+      father: {
+        name: 'A1',
+        gender: '♂',
+        breed: 'アメショ',
+        color: 'シルバー',
+      },
+      mother: {
+        name: 'A2',
+        gender: '♀',
+        breed: 'アメショ',
+        color: 'ホワイト',
+      },
     },
     mother: {
       name: 'サクラ',
@@ -179,7 +216,7 @@ function getFourthGenNodes(pedigree: any) {
 }
 
 // 4世代目の表示を追加
-<Flex justify='center' gap="sm" flexWrap='wrap'>
+<Flex justify='center' gap='sm' flexWrap='wrap'>
   {getFourthGenNodes(mockPedigree).map((cat, idx) => (
     <PedigreeNode cat={cat} key={idx} />
   ))}

@@ -1,7 +1,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Container, Title, Card, Group, Text, Stack, Button, SimpleGrid, Box } from '@mantine/core';
+import {
+  Container,
+  Title,
+  Card,
+  Group,
+  Text,
+  Stack,
+  Button,
+  SimpleGrid,
+  Box,
+} from '@mantine/core';
 import {
   IconPlus,
   IconTag,

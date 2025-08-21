@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCatDto, UpdateCatDto, CatQueryDto } from './dto';
 import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
@@ -63,11 +67,19 @@ export class CatsService {
     if (ageMin || ageMax) {
       const now = new Date();
       if (ageMax) {
-        const minBirthDate = new Date(now.getFullYear() - ageMax, now.getMonth(), now.getDate());
+        const minBirthDate = new Date(
+          now.getFullYear() - ageMax,
+          now.getMonth(),
+          now.getDate(),
+        );
         where.birthDate = { gte: minBirthDate };
       }
       if (ageMin) {
-        const maxBirthDate = new Date(now.getFullYear() - ageMin, now.getMonth(), now.getDate());
+        const maxBirthDate = new Date(
+          now.getFullYear() - ageMin,
+          now.getMonth(),
+          now.getDate(),
+        );
         where.birthDate = { ...where.birthDate, lte: maxBirthDate };
       }
     }
@@ -79,20 +91,20 @@ export class CatsService {
         take: limit,
         include: {
           breed: {
-            select: { id: true, name: true, code: true }
+            select: { id: true, name: true, code: true },
           },
           color: {
-            select: { id: true, name: true, code: true }
+            select: { id: true, name: true, code: true },
           },
           owner: {
-            select: { id: true, firstName: true, lastName: true }
+            select: { id: true, firstName: true, lastName: true },
           },
           // Optimize: Only include basic info for related cats
           father: {
-            select: { id: true, name: true, registrationId: true }
+            select: { id: true, name: true, registrationId: true },
           },
           mother: {
-            select: { id: true, name: true, registrationId: true }
+            select: { id: true, name: true, registrationId: true },
           },
           // Optimize: Limit breeding records
           maleBreedingRecords: {
@@ -103,9 +115,9 @@ export class CatsService {
               breedingDate: true,
               status: true,
               female: {
-                select: { id: true, name: true }
-              }
-            }
+                select: { id: true, name: true },
+              },
+            },
           },
           femaleBreedingRecords: {
             take: 3,
@@ -115,9 +127,9 @@ export class CatsService {
               breedingDate: true,
               status: true,
               male: {
-                select: { id: true, name: true }
-              }
-            }
+                select: { id: true, name: true },
+              },
+            },
           },
           // Optimize: Limit care records
           careRecords: {
@@ -128,8 +140,8 @@ export class CatsService {
               careType: true,
               careDate: true,
               nextDueDate: true,
-              description: true
-            }
+              description: true,
+            },
           },
         },
         orderBy: {
@@ -152,18 +164,7 @@ export class CatsService {
           include: {
             breed: true,
             color: true,
-            fatherPedigree: {
-              include: {
-                breed: true,
-                color: true,
-              },
-            },
-            motherPedigree: {
-              include: {
-                breed: true,
-                color: true,
-              },
-            },
+            genderList: true,
           },
         },
         maleBreedingRecords: {
@@ -291,21 +292,23 @@ export class CatsService {
   }
 
   async getStatistics() {
-    const [totalCats, totalMales, totalFemales, breedStats] = await Promise.all([
-      this.prisma.cat.count(),
-      this.prisma.cat.count({ where: { gender: 'MALE' } }),
-      this.prisma.cat.count({ where: { gender: 'FEMALE' } }),
-      this.prisma.cat.groupBy({
-        by: ['breedName'],
-        _count: true,
-        orderBy: {
-          _count: {
-            breedName: 'desc',
+    const [totalCats, totalMales, totalFemales, breedStats] = await Promise.all(
+      [
+        this.prisma.cat.count(),
+        this.prisma.cat.count({ where: { gender: 'MALE' } }),
+        this.prisma.cat.count({ where: { gender: 'FEMALE' } }),
+        this.prisma.cat.groupBy({
+          by: ['breedName'],
+          _count: true,
+          orderBy: {
+            _count: {
+              breedName: 'desc',
+            },
           },
-        },
-        take: 10,
-      }),
-    ]);
+          take: 10,
+        }),
+      ],
+    );
 
     // Process breed statistics (now using breedName directly)
     const breedStatsWithNames = breedStats.map(stat => ({

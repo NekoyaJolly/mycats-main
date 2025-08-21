@@ -188,8 +188,10 @@ export default function KittensPage() {
     // 母猫の子猫リストを更新
     setMotherCats(prev =>
       prev.map(cat =>
-        cat.id === selectedMother ? { ...cat, kittens: [...cat.kittens, ...newKittens] } : cat
-      )
+        cat.id === selectedMother
+          ? { ...cat, kittens: [...cat.kittens, ...newKittens] }
+          : cat,
+      ),
     );
 
     // フォームをリセット
@@ -250,7 +252,11 @@ export default function KittensPage() {
                   フィルタ適用中:
                 </Text>
                 <TagDisplay tagIds={filterTags} size='xs' />
-                <Button variant='subtle' size='xs' onClick={() => setFilterTags([])}>
+                <Button
+                  variant='subtle'
+                  size='xs'
+                  onClick={() => setFilterTags([])}
+                >
                   クリア
                 </Button>
               </Group>
@@ -267,7 +273,13 @@ export default function KittensPage() {
               </Card>
             ) : (
               getFilteredMotherCats().map(motherCat => (
-                <Card key={motherCat.id} shadow='sm' padding='md' radius='md' withBorder>
+                <Card
+                  key={motherCat.id}
+                  shadow='sm'
+                  padding='md'
+                  radius='md'
+                  withBorder
+                >
                   {/* 母猫情報行 */}
                   <Group justify='space-between' wrap='nowrap'>
                     <Group gap='xs'>
@@ -316,7 +328,9 @@ export default function KittensPage() {
                                 </Text>
                                 <Badge
                                   size='xs'
-                                  color={kitten.gender === 'オス' ? 'cyan' : 'pink'}
+                                  color={
+                                    kitten.gender === 'オス' ? 'cyan' : 'pink'
+                                  }
                                   variant='light'
                                 >
                                   {kitten.gender}
@@ -479,7 +493,9 @@ export default function KittensPage() {
                                 })}
                               </Text>
                               <Text size='xs' fw={500}>
-                                {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
+                                {date.toLocaleDateString('ja-JP', {
+                                  weekday: 'short',
+                                })}
                               </Text>
                             </div>
                           </th>
@@ -569,7 +585,11 @@ export default function KittensPage() {
                 特別ケア
               </Text>
               <Group>
-                <Button variant='outline' size='xs' leftSection={<IconPlus size={12} />}>
+                <Button
+                  variant='outline'
+                  size='xs'
+                  leftSection={<IconPlus size={12} />}
+                >
                   特別ケア追加
                 </Button>
               </Group>
@@ -605,7 +625,10 @@ export default function KittensPage() {
                             <Text size='sm' fw={500}>
                               {kitten.name}
                             </Text>
-                            <Badge size='xs' color={kitten.gender === 'オス' ? 'cyan' : 'pink'}>
+                            <Badge
+                              size='xs'
+                              color={kitten.gender === 'オス' ? 'cyan' : 'pink'}
+                            >
                               {kitten.gender}
                             </Badge>
                           </Group>
@@ -621,7 +644,7 @@ export default function KittensPage() {
                         </Stack>
                       </Card>
                     </Grid.Col>
-                  ))
+                  )),
                 )}
               </Grid>
             </Card>
@@ -639,7 +662,9 @@ export default function KittensPage() {
             onChange={value => setSelectedMother(value || '')}
             data={motherCats
               .sort(
-                (a, b) => new Date(b.deliveryDate).getTime() - new Date(a.deliveryDate).getTime()
+                (a, b) =>
+                  new Date(b.deliveryDate).getTime() -
+                  new Date(a.deliveryDate).getTime(),
               )
               .map(cat => ({
                 value: cat.id,
@@ -677,7 +702,9 @@ export default function KittensPage() {
               </Text>
               <Group gap='xs'>
                 {Array.from({ length: maleCount + femaleCount }, (_, i) => {
-                  const mother = motherCats.find(cat => cat.id === selectedMother);
+                  const mother = motherCats.find(
+                    cat => cat.id === selectedMother,
+                  );
                   const kittenNumber = (mother?.kittens.length || 0) + i + 1;
                   return (
                     <Badge
@@ -703,7 +730,9 @@ export default function KittensPage() {
             </Button>
             <Button
               onClick={handleRegisterKittens}
-              disabled={!selectedMother || (maleCount === 0 && femaleCount === 0)}
+              disabled={
+                !selectedMother || (maleCount === 0 && femaleCount === 0)
+              }
             >
               登録
             </Button>

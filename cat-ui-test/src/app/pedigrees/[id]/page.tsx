@@ -16,7 +16,13 @@ import {
   LoadingOverlay,
   Alert,
 } from '@mantine/core';
-import { IconArrowLeft, IconCalendar, IconUser, IconDna, IconFileText } from '@tabler/icons-react';
+import {
+  IconArrowLeft,
+  IconCalendar,
+  IconUser,
+  IconDna,
+  IconFileText,
+} from '@tabler/icons-react';
 import { useRouter, useParams } from 'next/navigation';
 
 interface PedigreeDetail {
@@ -72,7 +78,9 @@ export default function PedigreeDetailPage() {
     const fetchPedigree = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3004/api/v1/pedigrees/${pedigreeId}`);
+        const response = await fetch(
+          `http://localhost:3004/api/v1/pedigrees/${pedigreeId}`,
+        );
 
         if (!response.ok) {
           throw new Error('血統書データの取得に失敗しました');
@@ -81,7 +89,9 @@ export default function PedigreeDetailPage() {
         const data = await response.json();
         setPedigree(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : '不明なエラーが発生しました');
+        setError(
+          err instanceof Error ? err.message : '不明なエラーが発生しました',
+        );
       } finally {
         setLoading(false);
       }
@@ -127,7 +137,10 @@ export default function PedigreeDetailPage() {
     return (
       <Container size='lg' py='md'>
         <Paper p='md' style={{ position: 'relative', minHeight: '400px' }}>
-          <LoadingOverlay visible={true} overlayProps={{ radius: 'sm', blur: 2 }} />
+          <LoadingOverlay
+            visible={true}
+            overlayProps={{ radius: 'sm', blur: 2 }}
+          />
         </Paper>
       </Container>
     );
@@ -139,7 +152,11 @@ export default function PedigreeDetailPage() {
         <Alert color='red' title='エラー'>
           {error || '血統書データが見つかりませんでした'}
         </Alert>
-        <Button mt='md' leftSection={<IconArrowLeft size={16} />} onClick={() => router.back()}>
+        <Button
+          mt='md'
+          leftSection={<IconArrowLeft size={16} />}
+          onClick={() => router.back()}
+        >
           戻る
         </Button>
       </Container>
@@ -163,7 +180,9 @@ export default function PedigreeDetailPage() {
               variant='light'
               color='green'
               leftSection={<IconFileText size={16} />}
-              onClick={() => router.push(`/pedigrees/${pedigree.id}/family-tree`)}
+              onClick={() =>
+                router.push(`/pedigrees/${pedigree.id}/family-tree`)
+              }
             >
               家系図を見る
             </Button>
@@ -219,7 +238,9 @@ export default function PedigreeDetailPage() {
                 <Group>
                   <Text fw={600}>品種コード:</Text>
                   <Text>{pedigree.breedCode || '-'}</Text>
-                  {pedigree.breed && <Badge variant='light'>{pedigree.breed.name}</Badge>}
+                  {pedigree.breed && (
+                    <Badge variant='light'>{pedigree.breed.name}</Badge>
+                  )}
                 </Group>
                 <Group>
                   <Text fw={600}>毛色コード:</Text>
@@ -311,7 +332,9 @@ export default function PedigreeDetailPage() {
                     <Button
                       size='xs'
                       variant='light'
-                      onClick={() => router.push(`/pedigrees/${pedigree.fatherPedigree!.id}`)}
+                      onClick={() =>
+                        router.push(`/pedigrees/${pedigree.fatherPedigree!.id}`)
+                      }
                     >
                       詳細を見る
                     </Button>
@@ -353,7 +376,9 @@ export default function PedigreeDetailPage() {
                     <Button
                       size='xs'
                       variant='light'
-                      onClick={() => router.push(`/pedigrees/${pedigree.motherPedigree!.id}`)}
+                      onClick={() =>
+                        router.push(`/pedigrees/${pedigree.motherPedigree!.id}`)
+                      }
                     >
                       詳細を見る
                     </Button>
@@ -380,7 +405,11 @@ export default function PedigreeDetailPage() {
                   </Text>
                   <Stack gap='xs'>
                     {pedigree.fatherOf.map(child => (
-                      <Card key={child.id} p='xs' style={{ border: '1px solid #dee2e6' }}>
+                      <Card
+                        key={child.id}
+                        p='xs'
+                        style={{ border: '1px solid #dee2e6' }}
+                      >
                         <Group justify='space-between'>
                           <div>
                             <Text size='sm' fw={500}>
@@ -393,7 +422,9 @@ export default function PedigreeDetailPage() {
                           <Button
                             size='xs'
                             variant='light'
-                            onClick={() => router.push(`/pedigrees/${child.id}`)}
+                            onClick={() =>
+                              router.push(`/pedigrees/${child.id}`)
+                            }
                           >
                             詳細
                           </Button>
@@ -411,7 +442,11 @@ export default function PedigreeDetailPage() {
                   </Text>
                   <Stack gap='xs'>
                     {pedigree.motherOf.map(child => (
-                      <Card key={child.id} p='xs' style={{ border: '1px solid #dee2e6' }}>
+                      <Card
+                        key={child.id}
+                        p='xs'
+                        style={{ border: '1px solid #dee2e6' }}
+                      >
                         <Group justify='space-between'>
                           <div>
                             <Text size='sm' fw={500}>
@@ -424,7 +459,9 @@ export default function PedigreeDetailPage() {
                           <Button
                             size='xs'
                             variant='light'
-                            onClick={() => router.push(`/pedigrees/${child.id}`)}
+                            onClick={() =>
+                              router.push(`/pedigrees/${child.id}`)
+                            }
                           >
                             詳細
                           </Button>

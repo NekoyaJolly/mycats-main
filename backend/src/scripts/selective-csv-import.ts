@@ -48,7 +48,10 @@ interface ImportOptions {
  * CSVから特定範囲のキーを抽出してサンプルデータを作成
  */
 async function importSelectedPedigrees(options: ImportOptions = {}) {
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データUTFVer.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データUTFVer.csv',
+  );
 
   if (!fs.existsSync(csvPath)) {
     console.error('❌ CSVファイルが見つかりません:', csvPath);
@@ -98,7 +101,7 @@ async function importSelectedPedigrees(options: ImportOptions = {}) {
     console.log('\n🔍 プレビューモード - 最初の5件:');
     filteredRecords.slice(0, 5).forEach((record, index) => {
       console.log(
-        `${index + 1}. キー: ${record.キー}, GP: ${record.ＧＰ}, 名前: ${record.猫名前３}`
+        `${index + 1}. キー: ${record.キー}, GP: ${record.ＧＰ}, 名前: ${record.猫名前３}`,
       );
     });
     return;
@@ -120,11 +123,11 @@ async function importSelectedPedigrees(options: ImportOptions = {}) {
             ((record.猫名前２ || '') + ' ' + (record.猫名前３ || '')).trim() ||
             `Cat_${record.キー}`,
           breedCode: parseInt(record.猫種ｺｰﾄﾞ) || null,
-          gender: parseInt(record.性別) || null,
+          genderCode: parseInt(record.性別) || null,
           eyeColor: record.目色 || null,
           coatColorCode: parseInt(record.毛色ｺｰﾄﾞ) || null,
-          birthDate: parseDate(record.生年月日),
-          registrationDate: parseDate(record.登録年月日),
+          birthDate: parseDate(record.生年月日)?.toISOString().split('T')[0] || null,
+          registrationDate: parseDate(record.登録年月日)?.toISOString().split('T')[0] || null,
           breederName: record.繁殖者名 || null,
           ownerName: record.所有者名 || null,
           brotherCount: parseInt(record.兄弟の人数) || null,
@@ -274,7 +277,9 @@ async function main() {
         options.keyEnd = parseInt(args[++i]);
         break;
       case '--keys':
-        options.specificKeys = args[++i].split(',').map(k => parseInt(k.trim()));
+        options.specificKeys = args[++i]
+          .split(',')
+          .map(k => parseInt(k.trim()));
         break;
       case '--max':
         options.maxRecords = parseInt(args[++i]);

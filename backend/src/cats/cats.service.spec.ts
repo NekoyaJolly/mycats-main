@@ -63,7 +63,7 @@ describe('CatsService', () => {
       mockPrismaService.cat.count.mockResolvedValue(1);
 
       const result = await service.findAll(mockQuery);
-      
+
       expect(result.data).toEqual(mockCats);
       expect(result.meta.total).toBe(1);
       expect(mockPrismaService.cat.findMany).toHaveBeenCalled();
@@ -99,20 +99,22 @@ describe('CatsService', () => {
       mockPrismaService.cat.findUnique.mockResolvedValue(mockCat);
 
       const result = await service.findOne('1');
-      
+
       expect(result).toEqual(mockCat);
       expect(mockPrismaService.cat.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: '1' },
           include: expect.any(Object),
-        })
+        }),
       );
     });
 
     it('存在しないIDが指定された場合、例外を投げること', async () => {
       mockPrismaService.cat.findUnique.mockResolvedValue(null);
 
-      await expect(service.findOne('999')).rejects.toThrow('Cat with ID 999 not found');
+      await expect(service.findOne('999')).rejects.toThrow(
+        'Cat with ID 999 not found',
+      );
     });
   });
 
@@ -138,13 +140,13 @@ describe('CatsService', () => {
       mockPrismaService.cat.create.mockResolvedValue(mockCreatedCat);
 
       const result = await service.create(createCatDto);
-      
+
       expect(result).toEqual(mockCreatedCat);
       expect(mockPrismaService.cat.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: createCatDto,
           include: expect.any(Object),
-        })
+        }),
       );
     });
   });

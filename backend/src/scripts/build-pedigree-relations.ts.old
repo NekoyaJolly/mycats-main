@@ -19,7 +19,10 @@ interface PedigreeRelationData {
 }
 
 async function buildPedigreeRelations() {
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データRenamed.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データRenamed.csv',
+  );
 
   try {
     console.log('🔄 血統書リレーション構築を開始...\n');
@@ -35,7 +38,7 @@ async function buildPedigreeRelations() {
             columns: true,
             skip_empty_lines: true,
             trim: true,
-          })
+          }),
         )
         .on('data', (record: any) => {
           records.push({
@@ -109,7 +112,9 @@ async function buildPedigreeRelations() {
           relationCount++;
 
           if (relationCount <= 10) {
-            console.log(`✅ ${record.PedigreeID}: ${Object.keys(updateData).join(', ')}`);
+            console.log(
+              `✅ ${record.PedigreeID}: ${Object.keys(updateData).join(', ')}`,
+            );
           }
         }
       } catch (error) {
@@ -126,7 +131,10 @@ async function buildPedigreeRelations() {
     console.log('\n🔍 構築されたリレーション確認:');
     const relatedPedigrees = await prisma.pedigree.findMany({
       where: {
-        OR: [{ fatherPedigreeId: { not: null } }, { motherPedigreeId: { not: null } }],
+        OR: [
+          { fatherPedigreeId: { not: null } },
+          { motherPedigreeId: { not: null } },
+        ],
       },
       include: {
         fatherPedigree: {

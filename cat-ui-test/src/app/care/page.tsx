@@ -133,21 +133,25 @@ const getTypeIcon = (type: string) => {
 };
 
 export default function CarePage() {
-  const [careRecords, setCareRecords] = useState<CareRecord[]>(sampleCareRecords);
+  const [careRecords, setCareRecords] =
+    useState<CareRecord[]>(sampleCareRecords);
   const [opened, { open, close }] = useDisclosure(false);
   const [activeTab, setActiveTab] = useState<string>('today');
 
   // 今日の予定を取得
   const getTodayCare = () => {
     const today = new Date().toISOString().split('T')[0];
-    return careRecords.filter(record => record.date === today || record.nextDate === today);
+    return careRecords.filter(
+      record => record.date === today || record.nextDate === today,
+    );
   };
 
   // 遅延中のケアを取得
   const getOverdueCare = () => {
     const today = new Date().toISOString().split('T')[0];
     return careRecords.filter(
-      record => record.nextDate && record.nextDate < today && record.status !== '完了'
+      record =>
+        record.nextDate && record.nextDate < today && record.status !== '完了',
     );
   };
 
@@ -161,7 +165,9 @@ export default function CarePage() {
     return careRecords.filter(
       record =>
         (record.date >= todayStr && record.date <= weekLaterStr) ||
-        (record.nextDate && record.nextDate >= todayStr && record.nextDate <= weekLaterStr)
+        (record.nextDate &&
+          record.nextDate >= todayStr &&
+          record.nextDate <= weekLaterStr),
     );
   };
 
@@ -267,7 +273,13 @@ export default function CarePage() {
               </Card>
             ) : (
               getTodayCare().map(record => (
-                <Card key={record.id} shadow='sm' padding='md' radius='md' withBorder>
+                <Card
+                  key={record.id}
+                  shadow='sm'
+                  padding='md'
+                  radius='md'
+                  withBorder
+                >
                   <Group justify='space-between' wrap='nowrap'>
                     <Group gap='md'>
                       {getTypeIcon(record.type)}
@@ -309,7 +321,14 @@ export default function CarePage() {
               </Card>
             ) : (
               getOverdueCare().map(record => (
-                <Card key={record.id} shadow='sm' padding='md' radius='md' withBorder bg='red.0'>
+                <Card
+                  key={record.id}
+                  shadow='sm'
+                  padding='md'
+                  radius='md'
+                  withBorder
+                  bg='red.0'
+                >
                   <Group justify='space-between' wrap='nowrap'>
                     <Group gap='md'>
                       {getTypeIcon(record.type)}
@@ -347,7 +366,13 @@ export default function CarePage() {
         <Tabs.Panel value='week' pt='md'>
           <Stack gap='md'>
             {getWeekCare().map(record => (
-              <Card key={record.id} shadow='sm' padding='md' radius='md' withBorder>
+              <Card
+                key={record.id}
+                shadow='sm'
+                padding='md'
+                radius='md'
+                withBorder
+              >
                 <Group justify='space-between' wrap='nowrap'>
                   <Group gap='md'>
                     {getTypeIcon(record.type)}
@@ -451,7 +476,10 @@ export default function CarePage() {
           />
           <DateInput label='実施日' placeholder='ケアを実施した日を選択' />
           <TextInput label='ケア内容' placeholder='具体的なケア内容を入力' />
-          <TextInput label='担当獣医師' placeholder='担当した獣医師名（任意）' />
+          <TextInput
+            label='担当獣医師'
+            placeholder='担当した獣医師名（任意）'
+          />
           <DateInput label='次回予定日' placeholder='次回実施予定日（任意）' />
           <Textarea label='備考' placeholder='特記事項があれば入力' rows={3} />
           <Group justify='flex-end' mt='md'>

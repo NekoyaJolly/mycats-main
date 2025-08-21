@@ -19,7 +19,10 @@ interface PedigreeRow {
  * CSVの内容を検索・プレビューする
  */
 async function previewCSV() {
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データUTFVer.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データUTFVer.csv',
+  );
 
   if (!fs.existsSync(csvPath)) {
     console.error('❌ CSVファイルが見つかりません:', csvPath);
@@ -63,7 +66,9 @@ async function previewCSV() {
   // サンプルデータの表示（nullチェック強化）
   console.log('\n📋 サンプルデータ (最初の10件):');
   console.log('─'.repeat(100));
-  console.log('キー    | GP        | 猫名前３           | 猫種 | 性別 | 生年月日   | 繁殖者名');
+  console.log(
+    'キー    | GP        | 猫名前３           | 猫種 | 性別 | 生年月日   | 繁殖者名',
+  );
   console.log('─'.repeat(100));
 
   records.slice(0, 10).forEach(record => {
@@ -71,11 +76,14 @@ async function previewCSV() {
     const gp = (record.ＧＰ || '').toString().padEnd(9);
     const name = (record.猫名前３ || '').toString().padEnd(18);
     const breed = (record.猫種ｺｰﾄﾞ || '').toString().padEnd(4);
-    const gender = record.性別 === '1' ? '雄' : record.性別 === '2' ? '雌' : '?';
+    const gender =
+      record.性別 === '1' ? '雄' : record.性別 === '2' ? '雌' : '?';
     const birth = (record.生年月日 || '').toString().padEnd(10);
     const breeder = (record.繁殖者名 || '').toString().substring(0, 15);
 
-    console.log(`${key} | ${gp} | ${name} | ${breed} | ${gender}  | ${birth} | ${breeder}`);
+    console.log(
+      `${key} | ${gp} | ${name} | ${breed} | ${gender}  | ${birth} | ${breeder}`,
+    );
   });
 
   console.log('─'.repeat(100));
@@ -96,10 +104,18 @@ async function previewCSV() {
 
   // 推奨サンプル範囲
   console.log('\n💡 推奨サンプル範囲:');
-  console.log('  npm run csv:import -- --start 701606 --end 701630     # 25件程度');
-  console.log('  npm run csv:import -- --start 700000 --end 700050     # 50件程度');
-  console.log('  npm run csv:import -- --keys 701606,701610,701615     # 特定の3件');
-  console.log('  npm run csv:preview                                    # プレビューモード');
+  console.log(
+    '  npm run csv:import -- --start 701606 --end 701630     # 25件程度',
+  );
+  console.log(
+    '  npm run csv:import -- --start 700000 --end 700050     # 50件程度',
+  );
+  console.log(
+    '  npm run csv:import -- --keys 701606,701610,701615     # 特定の3件',
+  );
+  console.log(
+    '  npm run csv:preview                                    # プレビューモード',
+  );
 }
 
 if (require.main === module) {

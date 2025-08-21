@@ -7,7 +7,10 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 
 async function bootstrap() {
   console.log('Starting NestJS application...');
-  console.log('DATABASE_URL:', process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':****@')); // パスワードを隠す
+  console.log(
+    'DATABASE_URL:',
+    process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':****@'),
+  ); // パスワードを隠す
   console.log('PORT:', process.env.PORT || 3004);
 
   const logger = new Logger('Bootstrap');
@@ -24,7 +27,9 @@ async function bootstrap() {
     app.enableCors({
       origin:
         process.env.NODE_ENV === 'production'
-          ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com']
+          ? process.env.ALLOWED_ORIGINS?.split(',') || [
+              'https://yourdomain.com',
+            ]
           : [
               'http://localhost:3000',
               'http://localhost:3002',
@@ -42,7 +47,7 @@ async function bootstrap() {
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
-      })
+      }),
     );
 
     // Global exception filter

@@ -35,7 +35,8 @@
     "pedigree:check": "ts-node src/scripts/check-pedigree-data.ts",
     "pedigree:relations": "ts-node src/scripts/build-pedigree-relations.ts",
     "pedigree:medium": "ts-node src/scripts/import-medium-dataset.ts",
-    "pedigree:parents": "ts-node src/scripts/import-parent-pedigrees.ts"
+    "pedigree:parents": "ts-node src/scripts/import-parent-pedigrees.ts",
+    "perf:test": "ts-node src/scripts/performance-test.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.0.1",
@@ -94,7 +95,7 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.2"
   },
   "jest": {
     "moduleFileExtensions": [

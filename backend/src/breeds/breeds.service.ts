@@ -13,7 +13,13 @@ export class BreedsService {
   }
 
   async findAll(query: BreedQueryDto) {
-    const { page = 1, limit = 50, search, sortBy = 'name', sortOrder = 'asc' } = query;
+    const {
+      page = 1,
+      limit = 50,
+      search,
+      sortBy = 'name',
+      sortOrder = 'asc',
+    } = query;
 
     const skip = (page - 1) * limit;
     const where: any = {};
@@ -124,7 +130,7 @@ export class BreedsService {
 
     if (catCount > 0 || pedigreeCount > 0) {
       throw new NotFoundException(
-        `Cannot delete breed: ${catCount} cats and ${pedigreeCount} pedigrees are using this breed`
+        `Cannot delete breed: ${catCount} cats and ${pedigreeCount} pedigrees are using this breed`,
       );
     }
 
@@ -134,34 +140,35 @@ export class BreedsService {
   }
 
   async getStatistics() {
-    const [totalBreeds, mostPopularBreeds, breedDistribution] = await Promise.all([
-      this.prisma.breed.count(),
-      this.prisma.breed.findMany({
-        include: {
-          _count: {
-            select: {
-              cats: true,
-              pedigrees: true,
+    const [totalBreeds, mostPopularBreeds, breedDistribution] =
+      await Promise.all([
+        this.prisma.breed.count(),
+        this.prisma.breed.findMany({
+          include: {
+            _count: {
+              select: {
+                cats: true,
+                pedigrees: true,
+              },
             },
           },
-        },
-        orderBy: {
-          cats: {
-            _count: 'desc',
+          orderBy: {
+            cats: {
+              _count: 'desc',
+            },
           },
-        },
-        take: 10,
-      }),
-      this.prisma.cat.groupBy({
-        by: ['breedName'],
-        _count: true,
-        orderBy: {
-          _count: {
-            breedName: 'desc',
+          take: 10,
+        }),
+        this.prisma.cat.groupBy({
+          by: ['breedName'],
+          _count: true,
+          orderBy: {
+            _count: {
+              breedName: 'desc',
+            },
           },
-        },
-      }),
-    ]);
+        }),
+      ]);
 
     return {
       totalBreeds,

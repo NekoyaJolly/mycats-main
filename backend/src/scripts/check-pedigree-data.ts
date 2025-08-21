@@ -26,7 +26,7 @@ async function checkPedigreeData() {
         // Removed: catName: true,
         title: true,
         catName: true,
-        gender: true,
+        genderCode: true,
         birthDate: true,
         breederName: true,
         ownerName: true,
@@ -36,18 +36,25 @@ async function checkPedigreeData() {
       },
     });
 
-    console.log(`\n📋 サンプル範囲データ (701606-701630): ${sampleData.length}件`);
+    console.log(
+      `\n📋 サンプル範囲データ (701606-701630): ${sampleData.length}件`,
+    );
     console.log('='.repeat(120));
     console.log('ID\t\t名前\t\t\t\t性別\t生年月日\t\t繁殖者名');
     console.log('='.repeat(120));
 
     sampleData.forEach(data => {
-      const fullName = [data.title, data.catName, data.catName].filter(Boolean).join(' ');
-      const gender = data.gender === 1 ? '雄' : data.gender === 2 ? '雌' : '不明';
-      const birthDate = data.birthDate ? data.birthDate.toISOString().split('T')[0] : '未設定';
+      const fullName = [data.title, data.catName, data.catName]
+        .filter(Boolean)
+        .join(' ');
+      const gender =
+        data.genderCode === 1 ? '雄' : data.genderCode === 2 ? '雌' : '不明';
+      const birthDate = data.birthDate
+        ? data.birthDate
+        : '未設定';
 
       console.log(
-        `${data.pedigreeId}\t${fullName.padEnd(30)}\t${gender}\t${birthDate}\t${data.breederName || '未設定'}`
+        `${data.pedigreeId}\t${fullName.padEnd(30)}\t${gender}\t${birthDate}\t${data.breederName || '未設定'}`,
       );
     });
 
@@ -74,7 +81,9 @@ async function checkPedigreeData() {
     });
 
     breedStats.forEach(stat => {
-      console.log(`  猫種コード ${stat.breedCode || '未設定'}: ${stat._count}件`);
+      console.log(
+        `  猫種コード ${stat.breedCode || '未設定'}: ${stat._count}件`,
+      );
     });
   } catch (error) {
     console.error('❌ データ確認中にエラーが発生しました:', error);

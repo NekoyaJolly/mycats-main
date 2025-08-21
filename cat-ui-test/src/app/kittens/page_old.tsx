@@ -4,7 +4,13 @@ import { Box, Title, Text } from '@mantine/core';
 
 export default function KittensPage() {
   return (
-    <Box style={{ minHeight: '100vh', backgroundColor: '#f8f9fa', padding: '2rem' }}>
+    <Box
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#f8f9fa',
+        padding: '2rem',
+      }}
+    >
       <Title order={1} c='blue' mb='md'>
         子猫管理
       </Title>
@@ -21,7 +27,9 @@ export default function KittensPage() {
       <Heading size='lg' color='brand.500' mb={4}>
         子猫管理
       </Heading>
-      <Text>子猫の登録・管理・ケアスケジュールのページです（今後実装予定）。</Text>
+      <Text>
+        子猫の登録・管理・ケアスケジュールのページです（今後実装予定）。
+      </Text>
     </Box>
   );
 }

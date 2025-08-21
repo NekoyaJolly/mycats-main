@@ -52,8 +52,20 @@ const maleCats = [
     status: '繁殖可能',
     tags: ['純血', '中型'],
   },
-  { id: '7', name: 'クロ', breed: '雑種', status: '繁殖可能', tags: ['健康', '中型'] },
-  { id: '8', name: 'シロ', breed: 'ペルシャ', status: '繁殖可能', tags: ['血統書付き', '小型'] },
+  {
+    id: '7',
+    name: 'クロ',
+    breed: '雑種',
+    status: '繁殖可能',
+    tags: ['健康', '中型'],
+  },
+  {
+    id: '8',
+    name: 'シロ',
+    breed: 'ペルシャ',
+    status: '繁殖可能',
+    tags: ['血統書付き', '小型'],
+  },
 ];
 
 const femaleCats = [
@@ -131,9 +143,13 @@ export default function BreedingPage() {
   const [activeTab, setActiveTab] = useState('schedule');
   const [selectedMonth, setSelectedMonth] = useState(8); // 8月
   const [selectedYear, setSelectedYear] = useState(2024);
-  const [breedingSchedule, setBreedingSchedule] = useState<Record<string, any>>({});
+  const [breedingSchedule, setBreedingSchedule] = useState<Record<string, any>>(
+    {},
+  );
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedMaleForEdit, setSelectedMaleForEdit] = useState<string | null>(null);
+  const [selectedMaleForEdit, setSelectedMaleForEdit] = useState<string | null>(
+    null,
+  );
   const [activeMales, setActiveMales] = useState(maleCats.slice(0, 4)); // 最初は4頭表示
   const [pregnancyCheckList, setPregnancyCheckList] = useState([
     {
@@ -159,9 +175,12 @@ export default function BreedingPage() {
   const [selectedMale, setSelectedMale] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [availableFemales, setAvailableFemales] = useState<any[]>([]);
-  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
-  const [maleModalOpened, { open: openMaleModal, close: closeMaleModal }] = useDisclosure(false);
-  const [rulesModalOpened, { open: openRulesModal, close: closeRulesModal }] = useDisclosure(false);
+  const [modalOpened, { open: openModal, close: closeModal }] =
+    useDisclosure(false);
+  const [maleModalOpened, { open: openMaleModal, close: closeMaleModal }] =
+    useDisclosure(false);
+  const [rulesModalOpened, { open: openRulesModal, close: closeRulesModal }] =
+    useDisclosure(false);
 
   const router = useRouter();
 
@@ -177,9 +196,11 @@ export default function BreedingPage() {
     return ngPairingRules.some(rule => {
       if (!rule.active) return false;
 
-      const maleMatches = rule.maleConditions.some(condition => male.tags.includes(condition));
+      const maleMatches = rule.maleConditions.some(condition =>
+        male.tags.includes(condition),
+      );
       const femaleMatches = rule.femaleConditions.some(condition =>
-        female.tags.includes(condition)
+        female.tags.includes(condition),
       );
 
       return maleMatches && femaleMatches;
@@ -218,7 +239,7 @@ export default function BreedingPage() {
       female =>
         female.status === '繁殖可能' &&
         !pregnancyCheckList.some(p => p.femaleName === female.name) &&
-        !birthPlanList.some(b => b.femaleName === female.name)
+        !birthPlanList.some(b => b.femaleName === female.name),
     );
 
     setAvailableFemales(available);
@@ -239,15 +260,17 @@ export default function BreedingPage() {
       // NGペアチェック
       if (isNGPairing(selectedMale!, femaleId)) {
         const ngRule = ngPairingRules.find(rule => {
-          const maleMatches = rule.maleConditions.some(condition => male.tags.includes(condition));
+          const maleMatches = rule.maleConditions.some(condition =>
+            male.tags.includes(condition),
+          );
           const femaleMatches = rule.femaleConditions.some(condition =>
-            female.tags.includes(condition)
+            female.tags.includes(condition),
           );
           return rule.active && maleMatches && femaleMatches;
         });
 
         const confirmed = window.confirm(
-          `警告: このペアは「${ngRule?.name}」ルールに該当します。\n${ngRule?.description}\n\n本当に交配を予定しますか？`
+          `警告: このペアは「${ngRule?.name}」ルールに該当します。\n${ngRule?.description}\n\n本当に交配を予定しますか？`,
         );
 
         if (!confirmed) {
@@ -262,7 +285,7 @@ export default function BreedingPage() {
       const existingPair = breedingSchedule[scheduleKey];
       if (existingPair) {
         const success = window.confirm(
-          `前回のペア（${male.name} × ${existingPair.femaleName}）は成功しましたか？`
+          `前回のペア（${male.name} × ${existingPair.femaleName}）は成功しましたか？`,
         );
 
         if (success) {
@@ -355,18 +378,30 @@ export default function BreedingPage() {
     >
       {/* ヘッダー */}
       <Box
-        style={{ backgroundColor: 'white', borderBottom: '1px solid #e9ecef', padding: '1rem 0' }}
+        style={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid #e9ecef',
+          padding: '1rem 0',
+        }}
       >
         <Container size='xl'>
           <Flex align='center' gap='md'>
-            <ActionIcon variant='subtle' size='lg' onClick={() => router.push('/')}>
+            <ActionIcon
+              variant='subtle'
+              size='lg'
+              onClick={() => router.push('/')}
+            >
               <IconArrowLeft size={20} />
             </ActionIcon>
             <Title order={1} c='blue.6'>
               繁殖管理
             </Title>
             <Group gap='sm' ml='auto'>
-              <ActionIcon variant='light' onClick={openRulesModal} title='NGペアルール設定'>
+              <ActionIcon
+                variant='light'
+                onClick={openRulesModal}
+                title='NGペアルール設定'
+              >
                 <IconSettings size={18} />
               </ActionIcon>
               <ActionIcon
@@ -374,7 +409,11 @@ export default function BreedingPage() {
                 onClick={toggleFullscreen}
                 title={isFullscreen ? 'フルスクリーン終了' : 'フルスクリーン'}
               >
-                {isFullscreen ? <IconMinimize size={18} /> : <IconMaximize size={18} />}
+                {isFullscreen ? (
+                  <IconMinimize size={18} />
+                ) : (
+                  <IconMaximize size={18} />
+                )}
               </ActionIcon>
             </Group>
           </Flex>
@@ -395,7 +434,11 @@ export default function BreedingPage() {
         </Title>
 
         {/* タブ */}
-        <Tabs value={activeTab} onChange={value => setActiveTab(value || 'schedule')} mb='md'>
+        <Tabs
+          value={activeTab}
+          onChange={value => setActiveTab(value || 'schedule')}
+          mb='md'
+        >
           <Tabs.List>
             <Tabs.Tab value='schedule' leftSection={<IconCalendar size={16} />}>
               交配管理表
@@ -423,7 +466,10 @@ export default function BreedingPage() {
                   label='年'
                   value={selectedYear.toString()}
                   onChange={value => setSelectedYear(parseInt(value || '2024'))}
-                  data={['2024', '2025', '2026'].map(year => ({ value: year, label: year + '年' }))}
+                  data={['2024', '2025', '2026'].map(year => ({
+                    value: year,
+                    label: year + '年',
+                  }))}
                   size={isFullscreen ? 'xs' : 'sm'}
                 />
                 <Select
@@ -474,15 +520,26 @@ export default function BreedingPage() {
                         日付
                       </Table.Th>
                       {activeMales.map(male => (
-                        <Table.Th key={male.id} style={{ minWidth: isFullscreen ? 100 : 120 }}>
+                        <Table.Th
+                          key={male.id}
+                          style={{ minWidth: isFullscreen ? 100 : 120 }}
+                        >
                           <Box
                             onClick={() => handleMaleNameClick(male.id)}
                             style={{ cursor: 'pointer', position: 'relative' }}
                           >
-                            <Text fw={600} size={isFullscreen ? 'xs' : 'sm'} ta='center'>
+                            <Text
+                              fw={600}
+                              size={isFullscreen ? 'xs' : 'sm'}
+                              ta='center'
+                            >
                               {male.name}
                             </Text>
-                            <Text size={isFullscreen ? '8px' : 'xs'} c='dimmed' ta='center'>
+                            <Text
+                              size={isFullscreen ? '8px' : 'xs'}
+                              c='dimmed'
+                              ta='center'
+                            >
                               {male.breed}
                             </Text>
                             {/* +ボタンを名前の中心に配置 */}
@@ -518,7 +575,10 @@ export default function BreedingPage() {
                               >
                                 削除
                               </Button>
-                              <Button size='xs' onClick={() => setSelectedMaleForEdit(null)}>
+                              <Button
+                                size='xs'
+                                onClick={() => setSelectedMaleForEdit(null)}
+                              >
                                 保存
                               </Button>
                             </Group>
@@ -526,7 +586,11 @@ export default function BreedingPage() {
                         </Table.Th>
                       ))}
                       <Table.Th style={{ minWidth: isFullscreen ? 60 : 80 }}>
-                        <ActionIcon variant='light' onClick={openMaleModal} title='オス猫追加'>
+                        <ActionIcon
+                          variant='light'
+                          onClick={openMaleModal}
+                          title='オス猫追加'
+                        >
                           <IconPlus size={isFullscreen ? 14 : 16} />
                         </ActionIcon>
                       </Table.Th>
@@ -551,7 +615,11 @@ export default function BreedingPage() {
                             {date}日
                           </Text>
                           <Text size={isFullscreen ? '8px' : 'xs'} c='dimmed'>
-                            {['日', '月', '火', '水', '木', '金', '土'][dayOfWeek]}
+                            {
+                              ['日', '月', '火', '水', '木', '金', '土'][
+                                dayOfWeek
+                              ]
+                            }
                           </Text>
                         </Table.Td>
                         {activeMales.map(male => {
@@ -559,15 +627,24 @@ export default function BreedingPage() {
                           const schedule = breedingSchedule[scheduleKey];
 
                           return (
-                            <Table.Td key={male.id} style={{ textAlign: 'center' }}>
+                            <Table.Td
+                              key={male.id}
+                              style={{ textAlign: 'center' }}
+                            >
                               {schedule ? (
                                 schedule.isHistory ? (
-                                  <Text size={isFullscreen ? '8px' : 'xs'} c='dimmed'>
+                                  <Text
+                                    size={isFullscreen ? '8px' : 'xs'}
+                                    c='dimmed'
+                                  >
                                     {schedule.femaleName}
                                     <br />({schedule.result})
                                   </Text>
                                 ) : (
-                                  <Badge size={isFullscreen ? 'xs' : 'sm'} color='blue'>
+                                  <Badge
+                                    size={isFullscreen ? 'xs' : 'sm'}
+                                    color='blue'
+                                  >
                                     {schedule.femaleName}
                                   </Badge>
                                 )
@@ -575,7 +652,9 @@ export default function BreedingPage() {
                                 <Button
                                   variant='subtle'
                                   size={isFullscreen ? 'xs' : 'sm'}
-                                  onClick={() => handleMaleSelect(male.id, dateString)}
+                                  onClick={() =>
+                                    handleMaleSelect(male.id, dateString)
+                                  }
                                   style={{
                                     width: '100%',
                                     height: isFullscreen ? '24px' : '32px',
@@ -600,7 +679,13 @@ export default function BreedingPage() {
           <Tabs.Panel value='pregnancy' pt='md'>
             <Stack gap='sm'>
               {pregnancyCheckList.map(item => (
-                <Card key={item.id} shadow='sm' padding='md' radius='md' withBorder>
+                <Card
+                  key={item.id}
+                  shadow='sm'
+                  padding='md'
+                  radius='md'
+                  withBorder
+                >
                   <Flex justify='space-between' align='center'>
                     <Box style={{ flex: 1 }}>
                       <Group gap='md' mb='xs'>
@@ -649,7 +734,13 @@ export default function BreedingPage() {
           <Tabs.Panel value='birth' pt='md'>
             <Stack gap='sm'>
               {birthPlanList.map(item => (
-                <Card key={item.id} shadow='sm' padding='md' radius='md' withBorder>
+                <Card
+                  key={item.id}
+                  shadow='sm'
+                  padding='md'
+                  radius='md'
+                  withBorder
+                >
                   <Flex justify='space-between' align='center'>
                     <Box style={{ flex: 1 }}>
                       <Group gap='md' mb='xs'>
@@ -681,14 +772,21 @@ export default function BreedingPage() {
       </Container>
 
       {/* メス猫選択モーダル */}
-      <Modal opened={modalOpened} onClose={closeModal} title='交配するメス猫を選択' size='md'>
+      <Modal
+        opened={modalOpened}
+        onClose={closeModal}
+        title='交配するメス猫を選択'
+        size='md'
+      >
         <Stack gap='sm'>
           <Text size='sm' c='dimmed'>
             {selectedMale && activeMales.find(m => m.id === selectedMale)?.name}{' '}
             との交配相手を選択してください
           </Text>
           {availableFemales.map(female => {
-            const isNG = selectedMale ? isNGPairing(selectedMale, female.id) : false;
+            const isNG = selectedMale
+              ? isNGPairing(selectedMale, female.id)
+              : false;
             return (
               <Card
                 key={female.id}
@@ -753,7 +851,13 @@ export default function BreedingPage() {
           {maleCats
             .filter(male => !activeMales.some(am => am.id === male.id))
             .map(male => (
-              <Card key={male.id} shadow='sm' padding='sm' radius='md' withBorder>
+              <Card
+                key={male.id}
+                shadow='sm'
+                padding='sm'
+                radius='md'
+                withBorder
+              >
                 <Flex justify='space-between' align='center'>
                   <Box>
                     <Text fw={600}>{male.name}</Text>
@@ -774,7 +878,8 @@ export default function BreedingPage() {
                 </Flex>
               </Card>
             ))}
-          {maleCats.filter(male => !activeMales.some(am => am.id === male.id)).length === 0 && (
+          {maleCats.filter(male => !activeMales.some(am => am.id === male.id))
+            .length === 0 && (
             <Text ta='center' c='dimmed'>
               追加可能なオス猫がいません
             </Text>
@@ -783,7 +888,12 @@ export default function BreedingPage() {
       </Modal>
 
       {/* NGペアルール設定モーダル */}
-      <Modal opened={rulesModalOpened} onClose={closeRulesModal} title='NGペアルール設定' size='lg'>
+      <Modal
+        opened={rulesModalOpened}
+        onClose={closeRulesModal}
+        title='NGペアルール設定'
+        size='lg'
+      >
         <Stack gap='md'>
           <Text size='sm' c='dimmed'>
             交配時に警告を表示するルールを設定できます
@@ -802,13 +912,23 @@ export default function BreedingPage() {
               <Group gap='xs'>
                 <Text size='xs'>オス条件:</Text>
                 {rule.maleConditions.map((condition: string) => (
-                  <Badge key={condition} variant='outline' size='xs' color='blue'>
+                  <Badge
+                    key={condition}
+                    variant='outline'
+                    size='xs'
+                    color='blue'
+                  >
                     {condition}
                   </Badge>
                 ))}
                 <Text size='xs'>メス条件:</Text>
                 {rule.femaleConditions.map((condition: string) => (
-                  <Badge key={condition} variant='outline' size='xs' color='pink'>
+                  <Badge
+                    key={condition}
+                    variant='outline'
+                    size='xs'
+                    color='pink'
+                  >
                     {condition}
                   </Badge>
                 ))}

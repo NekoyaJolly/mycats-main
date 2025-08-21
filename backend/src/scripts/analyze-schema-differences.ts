@@ -7,28 +7,95 @@ async function analyzeDifferences() {
 
   // 設計書のフィールド一覧 (順序通り)
   const designFields = [
-    'PedigreeID', 'Title', 'CatName', 'CatName2', 'BreedCode', 'GenderCode', 
-    'EyeColor', 'CoatColorCode', 'BirthDate', 'BreederName', 'OwnerName',
-    'RegistrationDate', 'BrotherCount', 'SisterCount', 'Notes', 'Notes2', 
-    'OtherNo', 'FatherTitle', 'FatherCatName', 'FatherCatName2', 
-    'FatherCoatColor', 'FatherEyeColor', 'FatherJCU', 'FatherOtherCode',
-    'MotherTitle', 'MotherCatName', 'MotherCatName2', 'MotherCoatColor',
-    'MotherEyeColor', 'MotherJCU', 'MotherOtherCode', 'FFTitle', 'FFCatName',
-    'FFCatColor', 'FFJCU', 'FMTitle', 'FMCatName', 'FMCatColor', 'FMJCU',
-    'MFTitle', 'MFCatName', 'MFCatColor', 'MFJCU', 'MMTitle', 'MMCatName',
-    'MMCatColor', 'MMJCU', 'FFFTitle', 'FFFCatName', 'FFFCatColor', 'FFFJCU',
-    'FFMTitle', 'FFMCatName', 'FFMCatColor', 'FFMJCU', 'FMFTitle', 'FMFCatName',
-    'FMFCatColor', 'FMFJCU', 'FMMTitle', 'FMMCatName', 'FMMCatColor', 'FMMJCU',
-    'MFFTitle', 'MFFCatName', 'MFFCatColor', 'MFFJCU', 'MFMTitle', 'MFMCatName',
-    'MFMCatColor', 'MFMJCU', 'MMFTitle', 'MMFCatName', 'MMFCatColor', 'MMFJCU',
-    'MMMTitle', 'MMMCatName', 'MMMCatColor', 'MMMJCU', 'OldCode'
+    'PedigreeID',
+    'Title',
+    'CatName',
+    'CatName2',
+    'BreedCode',
+    'GenderCode',
+    'EyeColor',
+    'CoatColorCode',
+    'BirthDate',
+    'BreederName',
+    'OwnerName',
+    'RegistrationDate',
+    'BrotherCount',
+    'SisterCount',
+    'Notes',
+    'Notes2',
+    'OtherNo',
+    'FatherTitle',
+    'FatherCatName',
+    'FatherCatName2',
+    'FatherCoatColor',
+    'FatherEyeColor',
+    'FatherJCU',
+    'FatherOtherCode',
+    'MotherTitle',
+    'MotherCatName',
+    'MotherCatName2',
+    'MotherCoatColor',
+    'MotherEyeColor',
+    'MotherJCU',
+    'MotherOtherCode',
+    'FFTitle',
+    'FFCatName',
+    'FFCatColor',
+    'FFJCU',
+    'FMTitle',
+    'FMCatName',
+    'FMCatColor',
+    'FMJCU',
+    'MFTitle',
+    'MFCatName',
+    'MFCatColor',
+    'MFJCU',
+    'MMTitle',
+    'MMCatName',
+    'MMCatColor',
+    'MMJCU',
+    'FFFTitle',
+    'FFFCatName',
+    'FFFCatColor',
+    'FFFJCU',
+    'FFMTitle',
+    'FFMCatName',
+    'FFMCatColor',
+    'FFMJCU',
+    'FMFTitle',
+    'FMFCatName',
+    'FMFCatColor',
+    'FMFJCU',
+    'FMMTitle',
+    'FMMCatName',
+    'FMMCatColor',
+    'FMMJCU',
+    'MFFTitle',
+    'MFFCatName',
+    'MFFCatColor',
+    'MFFJCU',
+    'MFMTitle',
+    'MFMCatName',
+    'MFMCatColor',
+    'MFMJCU',
+    'MMFTitle',
+    'MMFCatName',
+    'MMFCatColor',
+    'MMFJCU',
+    'MMMTitle',
+    'MMMCatName',
+    'MMMCatColor',
+    'MMMJCU',
+    'OldCode',
   ];
 
   // 現在のテーブル構造を取得
-  const currentFields = await prisma.$queryRaw<Array<{
-    column_name: string;
-    ordinal_position: number;
-  }>>`
+  const currentFields = await prisma.$queryRaw<
+    Array<{
+      column_name: string;
+      ordinal_position: number;
+    }>
+  >`
     SELECT column_name, ordinal_position 
     FROM information_schema.columns 
     WHERE table_name = 'pedigrees' 
@@ -41,7 +108,7 @@ async function analyzeDifferences() {
 
   // フィールドマッピング確認
   const currentFieldNames = currentFields.map(f => f.column_name.toLowerCase());
-  
+
   console.log('❌ 設計書にあって現在ないフィールド:');
   designFields.forEach(field => {
     const lowerField = field.toLowerCase();
@@ -50,7 +117,7 @@ async function analyzeDifferences() {
     if (lowerField === 'pedigreeid') mappedField = 'pedigreeid';
     if (lowerField === 'gendercode') mappedField = 'gender';
     if (lowerField === 'catname') mappedField = 'catname';
-    
+
     if (!currentFieldNames.includes(mappedField)) {
       console.log(`  - ${field}`);
     }
@@ -60,11 +127,19 @@ async function analyzeDifferences() {
   currentFields.forEach(field => {
     const fieldName = field.column_name;
     // 設計書にない追加フィールド
-    const extraFields = ['id', 'catid', 'fatherpedigreeid', 'motherpedigreeid', 
-                         'paternalgrandfatherid', 'paternalgrandmotherid',
-                         'maternalgrandfatherid', 'maternalgrandmotherid', 
-                         'createdat', 'updatedat'];
-    
+    const extraFields = [
+      'id',
+      'catid',
+      'fatherpedigreeid',
+      'motherpedigreeid',
+      'paternalgrandfatherid',
+      'paternalgrandmotherid',
+      'maternalgrandfatherid',
+      'maternalgrandmotherid',
+      'createdat',
+      'updatedat',
+    ];
+
     if (extraFields.includes(fieldName.toLowerCase())) {
       console.log(`  - ${fieldName} (リレーション/メタデータ)`);
     }

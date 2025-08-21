@@ -31,10 +31,21 @@ interface PedigreeData {
 }
 
 async function importParentPedigrees() {
-  const csvPath = path.join(__dirname, '../../NewPedigree/血統書データRenamed.csv');
+  const csvPath = path.join(
+    __dirname,
+    '../../NewPedigree/血統書データRenamed.csv',
+  );
 
   // 親のIDリスト（JCUから抽出した番号）
-  const parentIds = ['163553', '169010', '700538', '142007', '700900', '150501', '116197'];
+  const parentIds = [
+    '163553',
+    '169010',
+    '700538',
+    '142007',
+    '700900',
+    '150501',
+    '116197',
+  ];
 
   try {
     console.log('🔄 親血統書データのインポートを開始...\n');
@@ -48,7 +59,7 @@ async function importParentPedigrees() {
             columns: true,
             skip_empty_lines: true,
             trim: true,
-          })
+          }),
         )
         .on('data', (record: any) => {
           // 親のIDが含まれる血統書のみ処理
@@ -97,7 +108,9 @@ async function importParentPedigrees() {
         }
 
         // 日付変換
-        const birthDate = record.BirthDate ? new Date(record.BirthDate.replace(/\./g, '-')) : null;
+        const birthDate = record.BirthDate
+          ? new Date(record.BirthDate.replace(/\./g, '-'))
+          : null;
         const registrationDate = record.RegistrationDate
           ? new Date(record.RegistrationDate.replace(/\./g, '-'))
           : null;
@@ -125,7 +138,7 @@ async function importParentPedigrees() {
         });
 
         console.log(
-          `✅ インポート: ${record.PedigreeID} - ${record.CatteryName} ${record.CatName}`
+          `✅ インポート: ${record.PedigreeID} - ${record.CatteryName} ${record.CatName}`,
         );
         importCount++;
       } catch (error) {
