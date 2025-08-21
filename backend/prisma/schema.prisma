@@ -307,6 +307,17 @@ model Pedigree {
   color                 CoatColor?  @relation(fields: [coatColorCode], references: [code])
   genderList            GenderList? @relation("PedigreeGenderList", fields: [genderCode], references: [code])
 
+  // パフォーマンス最適化インデックス
+  @@index([pedigreeId])
+  @@index([breedCode])
+  @@index([genderCode])
+  @@index([coatColorCode])
+  @@index([catName])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([breedCode, genderCode])
+  @@index([catName, breedCode])
+  @@index([createdAt, breedCode])
   @@map("pedigrees")
 }
 

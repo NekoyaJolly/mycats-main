@@ -4,11 +4,15 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CacheService } from '../common/cache';
 import { CreatePedigreeDto, UpdatePedigreeDto, PedigreeQueryDto } from './dto';
 
 @Injectable()
 export class PedigreeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cacheService: CacheService,
+  ) {}
 
   async getNextPedigreeId(): Promise<{ nextPedigreeId: string }> {
     // 最新のPedigreeIDを取得
@@ -44,9 +48,7 @@ export class PedigreeService {
     });
 
     if (!pedigree) {
-      throw new NotFoundException(
-        `PedigreeID ${pedigreeId} が見つかりません`,
-      );
+      throw new NotFoundException(`PedigreeID ${pedigreeId} が見つかりません`);
     }
 
     return pedigree;
@@ -88,29 +90,29 @@ export class PedigreeService {
       motherEyeColor: createPedigreeDto.motherEyeColor,
       motherJCU: createPedigreeDto.motherJCU,
       motherOtherCode: createPedigreeDto.motherOtherCode,
-      
+
       // 祖父母情報（父方祖父母）
       ffTitle: createPedigreeDto.ffTitle,
       ffCatName: createPedigreeDto.ffCatName,
       ffCatColor: createPedigreeDto.ffCatColor,
       ffJCU: createPedigreeDto.ffJCU,
-      
+
       fmTitle: createPedigreeDto.fmTitle,
       fmCatName: createPedigreeDto.fmCatName,
       fmCatColor: createPedigreeDto.fmCatColor,
       fmJCU: createPedigreeDto.fmJCU,
-      
+
       // 祖父母情報（母方祖父母）
       mfTitle: createPedigreeDto.mfTitle,
       mfCatName: createPedigreeDto.mfCatName,
       mfCatColor: createPedigreeDto.mfCatColor,
       mfJCU: createPedigreeDto.mfJCU,
-      
+
       mmTitle: createPedigreeDto.mmTitle,
       mmCatName: createPedigreeDto.mmCatName,
       mmCatColor: createPedigreeDto.mmCatColor,
       mmJCU: createPedigreeDto.mmJCU,
-      
+
       oldCode: createPedigreeDto.oldCode,
       catId: createPedigreeDto.catId,
     };
@@ -122,7 +124,7 @@ export class PedigreeService {
       }
     });
 
-    return this.prisma.pedigree.create({
+    const result = await this.prisma.pedigree.create({
       data: createData,
       include: {
         breed: true,
@@ -131,6 +133,11 @@ export class PedigreeService {
         cat: true,
       },
     });
+
+    // キャッシュを無効化
+    await this.cacheService.deletePattern('pedigree:statistics');
+
+    return result;
   }
 
   async findAll(query: PedigreeQueryDto) {
@@ -226,7 +233,7 @@ export class PedigreeService {
       }
     });
 
-    return this.prisma.pedigree.update({
+    const result = await this.prisma.pedigree.update({
       where: { id },
       data: updateData,
       include: {
@@ -236,45 +243,59 @@ export class PedigreeService {
         cat: true,
       },
     });
+
+    // キャッシュを無効化
+    await this.cacheService.deletePattern('pedigree:statistics');
+
+    return result;
   }
 
   async remove(id: string) {
     await this.findOne(id); // 存在確認
 
-    return this.prisma.pedigree.delete({
+    const result = await this.prisma.pedigree.delete({
       where: { id },
     });
+
+    // キャッシュを無効化
+    await this.cacheService.deletePattern('pedigree:statistics');
+
+    return result;
   }
 
   // 血統書統計情報の取得（設計書準拠）
   async getStatistics() {
-    const [
-      totalCount,
-      breedStats,
-      genderStats,
-      recentCount,
-    ] = await Promise.all([
-      this.prisma.pedigree.count(),
-      this.prisma.pedigree.groupBy({
-        by: ['breedCode'],
-        _count: true,
-        where: { breedCode: { not: null } },
-      }),
-      this.prisma.pedigree.groupBy({
-        by: ['genderCode'], // 設計書に合わせて変更
-        _count: true,
-        where: { genderCode: { not: null } },
-      }),
-      this.prisma.pedigree.count({
-        where: {
-          createdAt: {
-            gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 過去30日
-          },
-        },
-      }),
-    ]);
+    const cacheKey = 'pedigree:statistics';
 
-    return {
+    // キャッシュから取得を試行（5分キャッシュ）
+    const cached = await this.cacheService.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const [totalCount, breedStats, genderStats, recentCount] =
+      await Promise.all([
+        this.prisma.pedigree.count(),
+        this.prisma.pedigree.groupBy({
+          by: ['breedCode'],
+          _count: true,
+          where: { breedCode: { not: null } },
+        }),
+        this.prisma.pedigree.groupBy({
+          by: ['genderCode'], // 設計書に合わせて変更
+          _count: true,
+          where: { genderCode: { not: null } },
+        }),
+        this.prisma.pedigree.count({
+          where: {
+            createdAt: {
+              gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 過去30日
+            },
+          },
+        }),
+      ]);
+
+    const statistics = {
       total: totalCount,
       recent: recentCount,
       byBreed: breedStats.reduce((acc, stat) => {
@@ -286,5 +307,10 @@ export class PedigreeService {
         return acc;
       }, {}),
     };
+
+    // キャッシュに保存（5分間）
+    await this.cacheService.set(cacheKey, statistics, 300);
+
+    return statistics;
   }
 }

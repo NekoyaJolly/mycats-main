@@ -49,9 +49,7 @@ async function checkPedigreeData() {
         .join(' ');
       const gender =
         data.genderCode === 1 ? '雄' : data.genderCode === 2 ? '雌' : '不明';
-      const birthDate = data.birthDate
-        ? data.birthDate
-        : '未設定';
+      const birthDate = data.birthDate ? data.birthDate : '未設定';
 
       console.log(
         `${data.pedigreeId}\t${fullName.padEnd(30)}\t${gender}\t${birthDate}\t${data.breederName || '未設定'}`,

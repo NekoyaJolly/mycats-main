@@ -59,7 +59,7 @@ interface PedigreeFormData {
   notes?: string;
   notes2?: string;
   otherNo?: string;
-  
+
   // 父親情報
   fatherTitle?: string;
   fatherCatName?: string;
@@ -67,7 +67,7 @@ interface PedigreeFormData {
   fatherEyeColor?: string;
   fatherJCU?: string;
   fatherOtherCode?: string;
-  
+
   // 母親情報
   motherTitle?: string;
   motherCatName?: string;
@@ -75,24 +75,24 @@ interface PedigreeFormData {
   motherEyeColor?: string;
   motherJCU?: string;
   motherOtherCode?: string;
-  
+
   // 祖父母情報（父方祖父母）
   ffTitle?: string;
   ffCatName?: string;
   ffCatColor?: string;
   ffJCU?: string;
-  
+
   fmTitle?: string;
   fmCatName?: string;
   fmCatColor?: string;
   fmJCU?: string;
-  
+
   // 祖父母情報（母方祖父母）
   mfTitle?: string;
   mfCatName?: string;
   mfCatColor?: string;
   mfJCU?: string;
-  
+
   mmTitle?: string;
   mmCatName?: string;
   mmCatColor?: string;
@@ -261,7 +261,9 @@ export default function NewPedigreePage() {
       const submitData = {
         ...formData,
         birthDate: formData.birthDate?.toISOString().split('T')[0],
-        registrationDate: formData.registrationDate?.toISOString().split('T')[0],
+        registrationDate: formData.registrationDate
+          ?.toISOString()
+          .split('T')[0],
       };
 
       const response = await fetch('http://localhost:3004/api/v1/pedigrees', {
@@ -451,7 +453,9 @@ export default function NewPedigreePage() {
                   label='毛色コード'
                   placeholder='例: 190'
                   value={formData.coatColorCode || ''}
-                  onChange={value => updateFormData('coatColorCode', Number(value))}
+                  onChange={value =>
+                    updateFormData('coatColorCode', Number(value))
+                  }
                 />
               </Grid.Col>
               <Grid.Col span={6}>

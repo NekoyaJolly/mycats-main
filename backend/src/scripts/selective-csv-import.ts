@@ -126,8 +126,10 @@ async function importSelectedPedigrees(options: ImportOptions = {}) {
           genderCode: parseInt(record.性別) || null,
           eyeColor: record.目色 || null,
           coatColorCode: parseInt(record.毛色ｺｰﾄﾞ) || null,
-          birthDate: parseDate(record.生年月日)?.toISOString().split('T')[0] || null,
-          registrationDate: parseDate(record.登録年月日)?.toISOString().split('T')[0] || null,
+          birthDate:
+            parseDate(record.生年月日)?.toISOString().split('T')[0] || null,
+          registrationDate:
+            parseDate(record.登録年月日)?.toISOString().split('T')[0] || null,
           breederName: record.繁殖者名 || null,
           ownerName: record.所有者名 || null,
           brotherCount: parseInt(record.兄弟の人数) || null,

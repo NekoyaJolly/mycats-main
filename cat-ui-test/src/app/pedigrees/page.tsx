@@ -243,7 +243,10 @@ export default function PedigreesPage() {
                     <Text fw={500}>{pedigree.catName || '名前なし'}</Text>
                   </Table.Td>
                   <Table.Td>
-                    <Badge color={getGenderColor(pedigree.genderCode)} size='sm'>
+                    <Badge
+                      color={getGenderColor(pedigree.genderCode)}
+                      size='sm'
+                    >
                       {formatGender(pedigree.genderCode)}
                     </Badge>
                   </Table.Td>

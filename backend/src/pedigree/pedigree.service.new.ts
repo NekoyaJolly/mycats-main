@@ -201,31 +201,27 @@ export class PedigreeService {
 
   // 血統書統計情報の取得（設計書準拠）
   async getStatistics() {
-    const [
-      totalCount,
-      breedStats,
-      genderStats,
-      recentCount,
-    ] = await Promise.all([
-      this.prisma.pedigree.count(),
-      this.prisma.pedigree.groupBy({
-        by: ['breedCode'],
-        _count: true,
-        where: { breedCode: { not: null } },
-      }),
-      this.prisma.pedigree.groupBy({
-        by: ['genderCode'], // 設計書に合わせて変更
-        _count: true,
-        where: { genderCode: { not: null } },
-      }),
-      this.prisma.pedigree.count({
-        where: {
-          createdAt: {
-            gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 過去30日
+    const [totalCount, breedStats, genderStats, recentCount] =
+      await Promise.all([
+        this.prisma.pedigree.count(),
+        this.prisma.pedigree.groupBy({
+          by: ['breedCode'],
+          _count: true,
+          where: { breedCode: { not: null } },
+        }),
+        this.prisma.pedigree.groupBy({
+          by: ['genderCode'], // 設計書に合わせて変更
+          _count: true,
+          where: { genderCode: { not: null } },
+        }),
+        this.prisma.pedigree.count({
+          where: {
+            createdAt: {
+              gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 過去30日
+            },
           },
-        },
-      }),
-    ]);
+        }),
+      ]);
 
     return {
       total: totalCount,

@@ -225,7 +225,9 @@ async function importPedigreeSampleData() {
             coatColorCode: record.CoatColorCode
               ? parseInt(record.CoatColorCode)
               : null,
-            birthDate: record.BirthDate ? parseDate(record.BirthDate).toISOString().split('T')[0] : null,
+            birthDate: record.BirthDate
+              ? parseDate(record.BirthDate).toISOString().split('T')[0]
+              : null,
             registrationDate: record.RegistrationDate
               ? parseDate(record.RegistrationDate).toISOString().split('T')[0]
               : null,

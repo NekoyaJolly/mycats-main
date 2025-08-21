@@ -92,7 +92,7 @@ export interface Pedigree {
   notes?: string;
   notes2?: string;
   otherNo?: string;
-  
+
   // 父親情報
   fatherTitle?: string;
   fatherCatName?: string;
@@ -100,7 +100,7 @@ export interface Pedigree {
   fatherEyeColor?: string;
   fatherJCU?: string;
   fatherOtherCode?: string;
-  
+
   // 母親情報
   motherTitle?: string;
   motherCatName?: string;
@@ -108,29 +108,29 @@ export interface Pedigree {
   motherEyeColor?: string;
   motherJCU?: string;
   motherOtherCode?: string;
-  
+
   // 祖父母情報（父方祖父母）
   ffTitle?: string;
   ffCatName?: string;
   ffCatColor?: string;
   ffJCU?: string;
-  
+
   fmTitle?: string;
   fmCatName?: string;
   fmCatColor?: string;
   fmJCU?: string;
-  
+
   // 祖父母情報（母方祖父母）
   mfTitle?: string;
   mfCatName?: string;
   mfCatColor?: string;
   mfJCU?: string;
-  
+
   mmTitle?: string;
   mmCatName?: string;
   mmCatColor?: string;
   mmJCU?: string;
-  
+
   // システム情報
   createdAt?: string;
   updatedAt?: string;

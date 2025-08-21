@@ -268,10 +268,16 @@ async function importTestData() {
               coatColorCode: record.CoatColorCode
                 ? parseInt(record.CoatColorCode)
                 : null,
-              birthDate: parseDate(record.BirthDate || '')?.toISOString().split('T')[0] || null,
+              birthDate:
+                parseDate(record.BirthDate || '')
+                  ?.toISOString()
+                  .split('T')[0] || null,
               breederName: record.BreederName || null,
               ownerName: record.OwnerName || null,
-              registrationDate: parseDate(record.RegistrationDate || '')?.toISOString().split('T')[0] || null,
+              registrationDate:
+                parseDate(record.RegistrationDate || '')
+                  ?.toISOString()
+                  .split('T')[0] || null,
               brotherCount: record.BrotherCount
                 ? parseInt(record.BrotherCount)
                 : null,

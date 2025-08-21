@@ -15,6 +15,7 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { UsersModule } from './users/users.module';
 import { UploadModule } from './upload/upload.module';
 import { GlobalExceptionFilter } from './common/errors/global-exception.filter';
+import { CacheModule as CustomCacheModule } from './common/cache';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { GlobalExceptionFilter } from './common/errors/global-exception.filter';
       ttl: 5 * 60 * 1000, // 5 minutes default TTL
       max: 100, // maximum number of items in cache
     }),
+    CustomCacheModule, // 新しいカスタムキャッシュモジュール
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 1 minute

@@ -108,6 +108,25 @@ export class PedigreeController {
     return this.pedigreeService.findByPedigreeId(pedigreeId);
   }
 
+  @Get('statistics')
+  @ApiOperation({ summary: '血統書統計情報を取得' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '血統書統計情報',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number', description: '総数' },
+        recent: { type: 'number', description: '最近30日の新規登録数' },
+        byBreed: { type: 'object', description: '猫種別統計' },
+        byGender: { type: 'object', description: '性別統計' },
+      },
+    },
+  })
+  getStatistics() {
+    return this.pedigreeService.getStatistics();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'IDで血統書データを取得' })
   @ApiResponse({ status: HttpStatus.OK, description: '血統書データ' })
@@ -127,7 +146,6 @@ export class PedigreeController {
     status: HttpStatus.NOT_FOUND,
     description: '血統書データが見つかりません',
   })
-
   @Patch(':id')
   @ApiOperation({ summary: '血統書データを更新' })
   @ApiResponse({
