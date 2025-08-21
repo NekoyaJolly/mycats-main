@@ -24,9 +24,23 @@
 
 ## 📋 前提条件
 
-- Node.js 18.0.0 以上
-- PostgreSQL 15 以上
-- Git
+- **Node.js v22.18.0以上** (LTS版推奨)
+- **npm v10.0.0以上**
+- **PostgreSQL 15以上**
+- **Git**
+
+### システム要件確認
+
+```bash
+# Node.js バージョン確認
+node --version  # v22.18.0以上
+
+# npm バージョン確認
+npm --version   # v10.9.3以上
+
+# PostgreSQL バージョン確認
+postgres --version  # PostgreSQL 15以上
+```
 
 ## 🔧 セットアップ手順
 
@@ -94,16 +108,18 @@ npm run dev
 
 ## 🌐 アクセス URL
 
-- **フロントエンド**: http://localhost:3006
+- **フロントエンド**: http://localhost:3000 (Next.js)
 
   - 血統書管理: `/pedigrees`
   - 猫管理: `/cats`
   - 子猫管理: `/kittens`
   - 交配管理: `/breeding`
+  - ケア記録: `/care`
 
-- **バックエンド API**: http://localhost:3004/api/v1
+- **バックエンドAPI**: http://localhost:3001 (NestJS)
 
-  - Swagger Docs: http://localhost:3004/api/docs
+  - Swagger Docs: http://localhost:3001/api/docs
+  - Health Check: http://localhost:3001/health
 
 - **Prisma Studio**:
   ```bash
@@ -116,16 +132,23 @@ npm run dev
 
 ```bash
 # ヘルスチェック
-curl http://localhost:3004/health
+curl http://localhost:3001/health
 
 # 血統書データ取得
-curl http://localhost:3004/api/v1/pedigrees
+curl http://localhost:3001/api/v1/pedigrees
+
+# 猫データ取得
+curl http://localhost:3001/api/v1/cats
+
+# 猫種データ取得
+curl http://localhost:3001/api/v1/breeds
 ```
 
 ### 2. フロントエンド確認
 
-- http://localhost:3006 にアクセス
+- http://localhost:3000 にアクセス
 - 各ページが正常に表示されることを確認
+- Mantine UIコンポーネントの動作確認
 
 ## 📝 開発コマンド一覧
 

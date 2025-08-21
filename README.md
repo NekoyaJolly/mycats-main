@@ -134,9 +134,21 @@ curl http://localhost:3001/health
 
 ### 前提条件
 
-- Docker Desktop がインストールされていること
-- Node.js がインストールされていること (npm scripts を使用)
-- Git がインストールされていること
+- **Node.js v22.18.0以上** (LTS版推奨)
+- **npm v10.0.0以上** 
+- **Docker Desktop** がインストールされていること
+- **PostgreSQL** (ローカル環境の場合)
+- **Git** がインストールされていること
+
+### システム要件
+
+```bash
+# Node.js バージョン確認
+node --version  # v22.18.0以上
+
+# npm バージョン確認  
+npm --version   # v10.9.3以上
+```
 
 ### 1. リポジトリのクローン
 
@@ -175,10 +187,10 @@ npm start
 
 ### 4. アプリケーションへのアクセス
 
-- **Cat Management**: http://localhost:3000
-- **New Pedigree**: http://localhost:3002
-- **API Documentation**: http://localhost:3001/api/docs
-- **Nginx Proxy**: http://localhost
+- **フロントエンド**: http://localhost:3000 (Next.js)
+- **バックエンドAPI**: http://localhost:3001 (NestJS)
+- **API Documentation**: http://localhost:3001/api/docs (Swagger)
+- **Health Check**: http://localhost:3001/health
 
 ## 🔧 利用可能なコマンド
 
