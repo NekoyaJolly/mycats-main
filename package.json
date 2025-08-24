@@ -65,7 +65,7 @@
     "setup": "npm install && npm run install:all && npm run db:generate",
     "setup:fresh": "npm run clean && npm run setup && npm run db:migrate",
     "// === Git フック ===": "",
-    "prepare": "husky",
+    "prepare": "node -e \"if (!process.env.CI) require('child_process').execSync('husky',{stdio:'inherit'})\"",
     "// === テスト・品質管理 ===": "",
     "test:integration": "npm run test:integration --workspace=backend",
     "test:e2e": "npm run test:e2e --workspace=backend",
