@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "next/core-web-vitals"
+  ],
+  "rules": {
+    "no-unused-vars": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "prefer-const": "warn"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "dist/",
+    "coverage/"
+  ]
+}
