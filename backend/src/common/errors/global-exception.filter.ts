@@ -12,9 +12,12 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { Prisma } from '@prisma/client';
+// Prisma 名前空間経由だと生成物の違いで型が見つからないケースがあるため、
+// 実行時判定に使う例外クラスは runtime から直接インポートする
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-// カスタムエラータイプ
+// -------------------- 型/定義 --------------------
+
 export enum ErrorType {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   DATABASE_ERROR = 'DATABASE_ERROR',
@@ -25,7 +28,6 @@ export enum ErrorType {
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
 }
 
-// 標準化されたエラーレスポンス形式
 export interface StandardErrorResponse {
   success: false;
   error: {
@@ -39,7 +41,6 @@ export interface StandardErrorResponse {
   };
 }
 
-// カスタムエラークラス
 export class CatManagementError extends Error {
   constructor(
     public readonly type: ErrorType,
@@ -52,64 +53,73 @@ export class CatManagementError extends Error {
   }
 }
 
-// Prismaエラーのマッピング
+// -------------------- Prisma エラーマッピング --------------------
+
 export class PrismaErrorMapper {
-  static mapError(
-    error: Prisma.PrismaClientKnownRequestError,
-  ): CatManagementError {
-    switch (error.code) {
-      case 'P2000':
-        return new CatManagementError(
-          ErrorType.VALIDATION_ERROR,
-          'INVALID_INPUT_LENGTH',
-          '入力値が長すぎます',
-          { field: error.meta?.target },
-        );
+  static mapError(error: unknown): CatManagementError {
+    if (error instanceof PrismaClientKnownRequestError) {
+      switch (error.code) {
+        case 'P2000':
+          return new CatManagementError(
+            ErrorType.VALIDATION_ERROR,
+            'INVALID_INPUT_LENGTH',
+            '入力値が長すぎます',
+            { field: (error as any).meta?.target },
+          );
 
-      case 'P2001':
-        return new CatManagementError(
-          ErrorType.NOT_FOUND,
-          'RECORD_NOT_FOUND',
-          '指定されたレコードが見つかりません',
-          { where: error.meta?.cause },
-        );
+        case 'P2001':
+          return new CatManagementError(
+            ErrorType.NOT_FOUND,
+            'RECORD_NOT_FOUND',
+            '指定されたレコードが見つかりません',
+            { where: (error as any).meta?.cause },
+          );
 
-      case 'P2002':
-        return new CatManagementError(
-          ErrorType.VALIDATION_ERROR,
-          'UNIQUE_CONSTRAINT_VIOLATION',
-          '一意制約に違反しています',
-          { fields: error.meta?.target },
-        );
+        case 'P2002':
+          return new CatManagementError(
+            ErrorType.VALIDATION_ERROR,
+            'UNIQUE_CONSTRAINT_VIOLATION',
+            '一意制約に違反しています',
+            { fields: (error as any).meta?.target },
+          );
 
-      case 'P2003':
-        return new CatManagementError(
-          ErrorType.BUSINESS_RULE_VIOLATION,
-          'FOREIGN_KEY_CONSTRAINT',
-          '関連するレコードが存在しません',
-          { field: error.meta?.field_name },
-        );
+        case 'P2003':
+          return new CatManagementError(
+            ErrorType.BUSINESS_RULE_VIOLATION,
+            'FOREIGN_KEY_CONSTRAINT',
+            '関連するレコードが存在しません',
+            { field: (error as any).meta?.field_name },
+          );
 
-      case 'P2025':
-        return new CatManagementError(
-          ErrorType.NOT_FOUND,
-          'RECORD_TO_UPDATE_NOT_FOUND',
-          '更新対象のレコードが見つかりません',
-          error.meta,
-        );
+        case 'P2025':
+          return new CatManagementError(
+            ErrorType.NOT_FOUND,
+            'RECORD_TO_UPDATE_NOT_FOUND',
+            '更新対象のレコードが見つかりません',
+            (error as any).meta,
+          );
 
-      default:
-        return new CatManagementError(
-          ErrorType.DATABASE_ERROR,
-          'DATABASE_OPERATION_FAILED',
-          'データベース操作でエラーが発生しました',
-          { prismaCode: error.code, details: error.meta },
-        );
+        default:
+          return new CatManagementError(
+            ErrorType.DATABASE_ERROR,
+            'DATABASE_OPERATION_FAILED',
+            'データベース操作でエラーが発生しました',
+            { prismaCode: error.code, details: (error as any).meta },
+          );
+      }
     }
+
+    // Prisma 既知例外以外のフォールバック
+    return new CatManagementError(
+      ErrorType.INTERNAL_SERVER_ERROR,
+      'INTERNAL_ERROR',
+      '内部サーバーエラーが発生しました',
+    );
   }
 }
 
-// グローバルエラーフィルター
+// -------------------- グローバルフィルタ --------------------
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
@@ -118,11 +128,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
+    const requestId =
+      typeof request?.headers?.['x-request-id'] === 'string'
+        ? (request.headers['x-request-id'] as string)
+        : undefined;
 
     const standardError = this.createStandardErrorResponse(
       exception,
-      request.url,
-      request.headers['x-request-id'] as string,
+      request?.url ?? '',
+      requestId,
     );
 
     // ログ出力
@@ -138,7 +152,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     path: string,
     requestId?: string,
   ): StandardErrorResponse {
-    // CatManagementErrorの場合
+    // カスタムエラー
     if (exception instanceof CatManagementError) {
       return {
         success: false,
@@ -154,11 +168,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // HttpExceptionの場合
+    // Nest の HttpException
     if (exception instanceof HttpException) {
-      const response = exception.getResponse();
+      const res = exception.getResponse();
       const message =
-        typeof response === 'string' ? response : (response as any).message;
+        typeof res === 'string' ? res : (res as any)?.message ?? 'HTTP Error';
 
       return {
         success: false,
@@ -173,16 +187,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // PrismaErrorの場合
-    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
-      const mappedError = PrismaErrorMapper.mapError(exception);
+    // Prisma 既知例外
+    if (exception instanceof PrismaClientKnownRequestError) {
+      const mapped = PrismaErrorMapper.mapError(exception);
       return {
         success: false,
         error: {
-          type: mappedError.type,
-          code: mappedError.code,
-          message: mappedError.message,
-          details: mappedError.details,
+          type: mapped.type,
+          code: mapped.code,
+          message: mapped.message,
+          details: mapped.details,
           timestamp: new Date().toISOString(),
           path,
           requestId,
@@ -190,7 +204,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // その他のエラー（予期しないエラー）
+    // その他（予期しないエラー）
     return {
       success: false,
       error: {
@@ -239,8 +253,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     standardError: StandardErrorResponse,
     request: any,
   ) {
-    const { method, url, ip, headers } = request;
-    const userAgent = headers['user-agent'] || 'Unknown';
+    const { method, url, ip, headers } = request || {};
+    const userAgent = headers?.['user-agent'] || 'Unknown';
 
     const logData = {
       timestamp: standardError.error.timestamp,
@@ -253,17 +267,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
 
     if (standardError.error.type === ErrorType.INTERNAL_SERVER_ERROR) {
-      this.logger.error(
-        'Internal Server Error',
-        JSON.stringify(logData, null, 2),
-      );
+      this.logger.error('Internal Server Error', JSON.stringify(logData, null, 2));
     } else {
       this.logger.warn('Application Error', JSON.stringify(logData, null, 2));
     }
   }
 }
 
-// エラーヘルパー関数
+// -------------------- エラーヘルパー --------------------
+
 export class ErrorHelper {
   static throwNotFound(resource: string, identifier: string | number): never {
     throw new CatManagementError(
@@ -274,7 +286,7 @@ export class ErrorHelper {
     );
   }
 
-  static throwValidationError(message: string, details?: any): never {
+  static throwValidationError(message: string, details?: unknown): never {
     throw new CatManagementError(
       ErrorType.VALIDATION_ERROR,
       'VALIDATION_FAILED',
