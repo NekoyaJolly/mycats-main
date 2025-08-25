@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { config } from 'dotenv';
 
 // 環境変数スキーマ定義
 const envSchema = z.object({
@@ -66,14 +67,17 @@ export function validateConfig(): EnvConfig {
  * 環境変数の検証を行い、結果をログ出力する
  */
 export function validateAndLogConfig(): EnvConfig {
+  // .envファイルを明示的に読み込み
+  config();
+  
   try {
-    const config = validateConfig();
+    const configResult = validateConfig();
     console.log('✅ 環境変数の検証が完了しました');
-    console.log(`📌 環境: ${config.NODE_ENV}`);
-    console.log(`📌 バックエンドポート: ${config.BACKEND_PORT}`);
-    console.log(`📌 フロントエンドポート: ${config.FRONTEND_PORT}`);
-    console.log(`📌 データベース接続: ${config.DATABASE_URL.replace(/password=[^&]+/, 'password=***')}`);
-    return config;
+    console.log(`📌 環境: ${configResult.NODE_ENV}`);
+    console.log(`📌 バックエンドポート: ${configResult.BACKEND_PORT}`);
+    console.log(`📌 フロントエンドポート: ${configResult.FRONTEND_PORT}`);
+    console.log(`📌 データベース接続: ${configResult.DATABASE_URL.replace(/password=[^&]+/, 'password=***')}`);
+    return configResult;
   } catch (error) {
     console.error('❌ 環境変数の検証に失敗しました:', error.message);
     process.exit(1);

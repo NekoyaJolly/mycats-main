@@ -59,6 +59,11 @@ jobs:
 
       - name: 📦 Install deps (once per job)
         run: HUSKY=0 npm ci --workspaces --include-workspace-root
+ # Prisma クライアント生成（backend のみ）
+      - name: 🔧 Prisma generate (backend)
+        if: matrix.workspace == 'backend'
+        working-directory: backend
+        run: npx prisma generate
 
       - name: 🏗️ Build ${{ matrix.workspace }}
         run: npm run build --workspace=${{ matrix.workspace }} --if-present
